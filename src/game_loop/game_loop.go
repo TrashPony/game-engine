@@ -5,7 +5,6 @@ import (
 	"github.com/TrashPony/game_engine/src/game_loop/game_loop_bullets"
 	"github.com/TrashPony/game_engine/src/game_loop/game_loop_gun"
 	"github.com/TrashPony/game_engine/src/game_loop/game_loop_move"
-	"github.com/TrashPony/game_engine/src/game_loop/game_loop_terrain"
 	"github.com/TrashPony/game_engine/src/game_loop/game_loop_view"
 	"github.com/TrashPony/game_engine/src/mechanics/factories/bullets"
 	"github.com/TrashPony/game_engine/src/mechanics/factories/maps"
@@ -70,7 +69,6 @@ func GameLoop(mp *_map.Map) {
 		unitMoveMsg := game_loop_move.Unit(mp, units, dynObjects)
 		FlyBulletsMsgs, FlyLaserMsgs, ExplosionsMsgs := game_loop_bullets.Bullet(mp, mapBullets, units)
 
-		game_loop_terrain.TerrainLife(mp, dynObjects)                   // не отправляем изменения потому что они отслеживаются в пакете game_loop_view
 		game_loop_view.View(mp, players, units, dynObjects, mapBullets) // тут мы не возвращаем сообщения т.к. внутри делается для каждого юзера индивидуально
 
 		fireMsgs, rotateMsgs := game_loop_gun.Unit(mp, units)

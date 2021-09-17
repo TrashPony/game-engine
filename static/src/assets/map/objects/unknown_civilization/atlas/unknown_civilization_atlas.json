@@ -1,0 +1,177 @@
+{
+    "frames": [
+        {
+            "filename": "unknown_civilization_2",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 0,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "unknown_civilization_7_1",
+            "frame": {
+                "w": 256,
+                "h": 256,
+                "x": 512,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "unknown_civilization_7_2",
+            "frame": {
+                "w": 256,
+                "h": 256,
+                "x": 512,
+                "y": 256
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "unknown_civilization_7_3",
+            "frame": {
+                "w": 256,
+                "h": 256,
+                "x": 0,
+                "y": 512
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "unknown_civilization_7_4",
+            "frame": {
+                "w": 256,
+                "h": 256,
+                "x": 256,
+                "y": 512
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "unknown_civilization_7_5",
+            "frame": {
+                "w": 256,
+                "h": 256,
+                "x": 512,
+                "y": 512
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "unknown_civilization_6_1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 768,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "unknown_civilization_6_2",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 768,
+                "y": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "unknown_civilization_6_3",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 768,
+                "y": 256
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "unknown_civilization_6_4",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 768,
+                "y": 384
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "unknown_civilization_6_5",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 768,
+                "y": 512
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "unknown_civilization_5_1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 768,
+                "y": 640
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "unknown_civilization_5_2",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 0,
+                "y": 768
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

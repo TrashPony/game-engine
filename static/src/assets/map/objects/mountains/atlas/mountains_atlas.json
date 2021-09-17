@@ -1,0 +1,203 @@
+{
+    "frames": [
+        {
+            "filename": "mountain_5_2",
+            "frame": {
+                "w": 966,
+                "h": 990,
+                "x": 0,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_6_2",
+            "frame": {
+                "w": 944,
+                "h": 981,
+                "x": 966,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_1_2",
+            "frame": {
+                "w": 943,
+                "h": 914,
+                "x": 0,
+                "y": 990
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_5",
+            "frame": {
+                "w": 916,
+                "h": 930,
+                "x": 0,
+                "y": 1904
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_6",
+            "frame": {
+                "w": 856,
+                "h": 907,
+                "x": 916,
+                "y": 1904
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_1",
+            "frame": {
+                "w": 888,
+                "h": 749,
+                "x": 966,
+                "y": 981
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_4_2",
+            "frame": {
+                "w": 395,
+                "h": 295,
+                "x": 1910,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_4",
+            "frame": {
+                "w": 335,
+                "h": 239,
+                "x": 1910,
+                "y": 295
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_8",
+            "frame": {
+                "w": 256,
+                "h": 256,
+                "x": 1910,
+                "y": 534
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_7_2",
+            "frame": {
+                "w": 160,
+                "h": 214,
+                "x": 1910,
+                "y": 790
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_3_2",
+            "frame": {
+                "w": 207,
+                "h": 135,
+                "x": 2070,
+                "y": 790
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_7",
+            "frame": {
+                "w": 144,
+                "h": 196,
+                "x": 2070,
+                "y": 925
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_2_2",
+            "frame": {
+                "w": 195,
+                "h": 131,
+                "x": 1854,
+                "y": 1004
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_3",
+            "frame": {
+                "w": 176,
+                "h": 120,
+                "x": 943,
+                "y": 1730
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_2",
+            "frame": {
+                "w": 146,
+                "h": 87,
+                "x": 1119,
+                "y": 1730
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

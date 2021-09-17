@@ -1,0 +1,268 @@
+{
+    "frames": [
+        {
+            "filename": "elevation_1_10",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 0,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_1_11",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 512,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_1_12",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 0,
+                "y": 512
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_2_2",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 512,
+                "y": 512
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_2_3",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 1024,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_2_4",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 1024,
+                "y": 512
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_2_8",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 0,
+                "y": 1024
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_1_2",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 512,
+                "y": 1024
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_1_3",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 1024,
+                "y": 1024
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_1_4",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 1536,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_1_8",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 1536,
+                "y": 512
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_1_9",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 1536,
+                "y": 1024
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_2_1",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 0,
+                "y": 1536
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_2_6",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 512,
+                "y": 1536
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_2_7",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 1024,
+                "y": 1536
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_1_1",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 1536,
+                "y": 1536
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_1_6",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 2048,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_1_7",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 2048,
+                "y": 512
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_2_5",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 2048,
+                "y": 1024
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "elevation_1_5",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 2048,
+                "y": 1536
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

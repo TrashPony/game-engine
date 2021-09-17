@@ -1,0 +1,125 @@
+{
+    "frames": [
+        {
+            "filename": "tilted_mid_crater_1",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 0,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mid_crater_1",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 512,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "small_crater_1",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 0,
+                "y": 512
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "big_crater_1",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 512,
+                "y": 512
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "tilted_big_crater_1",
+            "frame": {
+                "w": 512,
+                "h": 512,
+                "x": 1024,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "tilted_small_crater_1",
+            "frame": {
+                "w": 256,
+                "h": 256,
+                "x": 1024,
+                "y": 512
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "tilted_mid_crater_2",
+            "frame": {
+                "w": 256,
+                "h": 256,
+                "x": 1024,
+                "y": 768
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "tilted_mid_crater_3",
+            "frame": {
+                "w": 256,
+                "h": 256,
+                "x": 1280,
+                "y": 512
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "tilted_big_crater_2",
+            "frame": {
+                "w": 256,
+                "h": 254,
+                "x": 1280,
+                "y": 768
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

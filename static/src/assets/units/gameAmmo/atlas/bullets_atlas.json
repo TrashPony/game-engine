@@ -1,0 +1,99 @@
+{
+    "frames": [
+        {
+            "filename": "aim_big_missile_bullet",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 0,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "aim_small_missile_bullet",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 128,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "ballistics_artillery_bullet",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 0,
+                "y": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "big_missile_bullet",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 128,
+                "y": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "piu-piu",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 256,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "piu-piu_2",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 256,
+                "y": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "small_missile_bullet",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 0,
+                "y": 256
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

@@ -146,7 +146,7 @@ func (m *PhysicalModel) SetZ(z float64) {
 }
 
 func (m *PhysicalModel) GetVelocityRotate() float64 {
-	return game_math.DegToRadian(m.Rotate)
+	return math.Atan2(m.YVelocity, m.XVelocity)
 }
 
 func (m *PhysicalModel) GetVelocity() (float64, float64) {

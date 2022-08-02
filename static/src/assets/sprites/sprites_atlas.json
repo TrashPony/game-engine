@@ -1,0 +1,151 @@
+{
+    "frames": [
+        {
+            "filename": "mountain_5_2",
+            "frame": {
+                "w": 966,
+                "h": 990,
+                "x": 0,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "mountain_5",
+            "frame": {
+                "w": 916,
+                "h": 930,
+                "x": 966,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "unknown_civilization_7_4",
+            "frame": {
+                "w": 256,
+                "h": 256,
+                "x": 0,
+                "y": 990
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "piu-piu_2",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 256,
+                "y": 990
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "replic_weapon_2_skin_1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 256,
+                "y": 1118
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "replic_start_body_skin_1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 384,
+                "y": 990
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "laser_turret_weapon_replics",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 384,
+                "y": 1118
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "laser_turret_weapon_reverses",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 512,
+                "y": 990
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "laser_turret_replics",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 512,
+                "y": 1118
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "laser_turret_reverses",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 640,
+                "y": 990
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "reverses_start_body_skin_1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 640,
+                "y": 1118
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

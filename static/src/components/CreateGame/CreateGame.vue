@@ -14,7 +14,7 @@
       <div class="players">
         <h3 class="players_head">Игроки:</h3>
 
-        <app-user-line v-for="p in lobbyState.players" v-bind:user="p"/>
+        <div v-for="p in lobbyState.players">{{ p.login }}</div>
       </div>
 
       <div class="settings">
@@ -38,7 +38,6 @@
 
 <script>
 import Control from '../Window/Control';
-import UserLine from "../UserLine/UserLine";
 
 export default {
   name: "CreateGame",
@@ -68,7 +67,7 @@ export default {
     },
     StartGame() {
       this.$store.dispatch("sendSocketData", JSON.stringify({
-        event: "StartGame",
+        event: "StartCustomGame",
         service: "lobby",
         uuid: this.lobbyState.uuid,
       }))
@@ -93,7 +92,6 @@ export default {
   },
   components: {
     AppControl: Control,
-    AppUserLine: UserLine,
   }
 }
 </script>

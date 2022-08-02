@@ -1,9 +1,11 @@
 import {Scene} from "../create";
 import store from "../../store/store";
 
-function PlayPositionSound(sounds, params, x, y, noDestroy) {
+let soundStore = {};
 
-  let volume = GetVolume(x, y)
+function PlayPositionSound(sounds, params, x, y, noDestroy, volumeK = 1) {
+
+  let volume = GetVolume(x, y, volumeK)
   if (!volume) {
     return
   }
@@ -12,19 +14,28 @@ function PlayPositionSound(sounds, params, x, y, noDestroy) {
   params.volume = volume;
 
   let soundName = sounds[getRandomInt(sounds.length)]
-  let sound = Scene.sound.add(soundName);
+
+  let sound;
+  if (soundStore.hasOwnProperty(soundName)) {
+    sound = soundStore[soundName].shift()
+  }
+
+  if (!sound) sound = Scene.sound.add(soundName);
 
   if (!noDestroy) {
     sound.on('complete', function () {
-      sound.destroy();
+      if (!soundStore.hasOwnProperty(soundName)) {
+        soundStore[soundName] = [];
+      }
+
+      soundStore[soundName].push(sound)
     });
   }
   sound.play(params);
-
   return sound;
 }
 
-function GetVolume(x, y) {
+function GetVolume(x, y, volumeK = 1) {
   let dist = Phaser.Math.Distance.Between(Scene.cameras.main.worldView.x + Scene.cameras.main.worldView.width / 2, Scene.cameras.main.worldView.y + Scene.cameras.main.worldView.height / 2, x, y);
   let percent = 100 - ((dist / (Scene.cameras.main.worldView.width / 2)) * 100);
 
@@ -38,7 +49,7 @@ function GetVolume(x, y) {
     percent = percent + 30;
   }
 
-  return percent / 100 * store.getters.getSettings.SFXVolume
+  return (percent / 100 * store.getters.getSettings.SFXVolume) * volumeK
 }
 
 function getRandomInt(max) {

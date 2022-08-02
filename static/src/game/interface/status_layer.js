@@ -1,52 +1,76 @@
 import {gameStore} from "../store";
 import {Scene} from "../create";
 
-function createBox(scene, sizeBox, boxKey, x, y, color) {
+function createBox(scene, sizeBox, boxKey, x, y, color, lineStyle = {
+  width: 4,
+  color: 0x000000,
+  alpha: 1
+}, fillStyle = {
+  color: color,
+  alpha: 1
+}) {
   if (!gameStore.StatusLayer.healBoxes.hasOwnProperty(boxKey)) {
     let graphics = scene.add.graphics();
     graphics.setDefaultStyles({
-      lineStyle: {
-        width: 4,
-        color: 0x000000,
-        alpha: 1
-      },
-      fillStyle: {
-        color: color,
-        alpha: 1
-      }
+      lineStyle: lineStyle,
+      fillStyle: fillStyle,
     });
 
     graphics.fillRect(0, 0, sizeBox * 2, sizeBox * 2);
     graphics.strokeRect(0, 0, sizeBox * 2, sizeBox * 2);
     graphics.generateTexture(boxKey, sizeBox * 2, sizeBox * 2);
     graphics.destroy();
+
+    gameStore.StatusLayer.healBoxes[boxKey] = true
   }
 }
 
 function ClearBars(type, id, typeBar) {
-  let oldBar = gameStore.StatusLayer.bars[type + id + typeBar];
+  let oldBar = getBar(type, id, typeBar);
   if (oldBar) {
-    oldBar.bar.destroy();
+    oldBar.bar.setVisible(false);
+
+    if (!gameStore.StatusLayer.barsCacheSprites[oldBar.key]) {
+      gameStore.StatusLayer.barsCacheSprites[oldBar.key] = []
+    }
+
+    gameStore.StatusLayer.barsCacheSprites[oldBar.key].push(oldBar.bar)
+
     delete gameStore.StatusLayer.bars[type + id + typeBar];
   }
 }
 
 function cacheBars() {
-  for (let i = 0; i < 100; i++) {
-    CreateMapBar(null, 1000, i * 10, 10, null, Scene, 'unit', 0, 'hp', 50);
-    CreateMapBar(null, 400, i * 10, 10, null, Scene, 'unit', 1, 'hp', 50);
-    CreateMapBar(null, 1000, i * 10, 10, null, Scene, 'object', 0, 'hp', 50);
-    CreateMapBar(null, 100, i, 10, null, Scene, 'object', 1, 'hp', 50);
-  }
-  ClearBars('unit', 0, 'hp')
-  ClearBars('unit', 1, 'hp')
-  ClearBars('object', 0, 'hp')
-  ClearBars('object', 1, 'hp')
 
+  for (let j in gameStore.gameTypes.bodies) {
+    for (let i = 50; i < gameStore.gameTypes.bodies[j].max_hp; i += 25) {
+      CreateMapBar(null, gameStore.gameTypes.bodies[j].max_hp, i, 10, null, Scene, 'unit', 0, 'hp', 50);
+    }
+  }
+
+  for (let i = 0; i < 500; i += 25) {
+    CreateMapBar(null, 500, i, 7, 0x0070ff, Scene, 'unit', 0, 'shield', 50);
+    CreateMapBar(null, 500, i, 7, 0x0070ff, Scene, 'object', 0, 'shield', 50);
+
+  }
+
+  for (let i = 0; i < 250; i += 25) {
+    CreateMapBar(null, 250, i, 7, 0x0070ff, Scene, 'unit', 0, 'shield', 50);
+    CreateMapBar(null, 250, i, 7, 0x0070ff, Scene, 'object', 0, 'shield', 50);
+  }
+
+  for (let i = 0; i < 250; i += 25) {
+    CreateMapBar(null, 500, i, 7, null, Scene, 'object', 0, 'hp', 50);
+  }
+
+  ClearBars('unit', 0, 'hp')
+  ClearBars('unit', 0, 'shield')
+  ClearBars('object', 0, 'hp')
+  ClearBars('object', 0, 'shield')
 }
 
 function CreateMapBar(sprite, maxHP, hp, offsetY, color, scene, type, id, typeBar, hpInBox) {
-  
+
   let sizeBox = 6;
   let interval = 1; // промеж уток между квадратиками
 
@@ -65,8 +89,8 @@ function CreateMapBar(sprite, maxHP, hp, offsetY, color, scene, type, id, typeBa
     sprite = {displayHeight: 0, originY: 0, x: 0, y: 0}
   }
   let displayHeight = sprite.displayHeight;
-  if (displayHeight === 0 && sprite.hasOwnProperty('unitBody')) {
-    displayHeight = sprite.unitBody.displayHeight * sprite.scale;
+  if (type === 'unit') {
+    displayHeight = sprite.displayHeight;
   }
 
   let boxY = Math.round(offsetY + displayHeight * sprite.originY);
@@ -86,22 +110,27 @@ function CreateMapBar(sprite, maxHP, hp, offsetY, color, scene, type, id, typeBa
 
   if (!gameStore.StatusLayer.barsCache[barKey]) {
     //null 400 338 85 50 "unit" -307
-    // console.log(color, maxHP, hp, percentHP, hpInBox, type, id)
     let bar = Scene.add.renderTexture(0, 0, sizeBar, sizeBox * 2);
-
     getBarKey(countBoxes, color, hp, percentHP, hpInBox, startX, sizeBox, interval, bar, scene, boxY)
-
     bar.saveTexture(barKey)
     bar.destroy();
     gameStore.StatusLayer.barsCache[barKey] = true
   }
 
-  let barSprite = Scene.make.sprite({
-    x: sprite.x,
-    y: sprite.y + boxY,
-    key: barKey,
-    add: true,
-  });
+  let barSprite
+  if (gameStore.StatusLayer.barsCacheSprites[barKey] && gameStore.StatusLayer.barsCacheSprites[barKey].length > 0) {
+    barSprite = gameStore.StatusLayer.barsCacheSprites[barKey].shift();
+    barSprite.setPosition(sprite.x, sprite.y + boxY);
+    barSprite.setVisible(true)
+  } else {
+    barSprite = Scene.make.image({
+      x: sprite.x,
+      y: sprite.y + boxY,
+      key: barKey,
+      add: true,
+    });
+  }
+
   gameStore.StatusLayer.bars[type + id + typeBar] = {
     bar: barSprite,
     key: barKey,
@@ -114,19 +143,23 @@ function CreateMapBar(sprite, maxHP, hp, offsetY, color, scene, type, id, typeBa
 
 function getBarKey(countBoxes, color, hp, percentHP, hpInBox, startX, sizeBox, interval, bar, scene, boxY) {
 
-  let BarKey = countBoxes
-
+  let fillBox = 0;
+  let notFillBox = 0;
+  let fillColor = ""
   for (let i = 0; i < countBoxes; i++) {
 
     if (hp > 0) {
+      fillBox++
+
       if (!color) {
         color = Phaser.Display.Color.HexStringToColor(GetColorDamage(percentHP).color).color;
       }
+
+      fillColor = color
     } else {
+      notFillBox++
       color = 0x999b9f;
     }
-
-    BarKey += ":" + color
 
     if (bar) {
       let boxKey = 'box_' + color + "" + sizeBox;
@@ -138,15 +171,23 @@ function getBarKey(countBoxes, color, hp, percentHP, hpInBox, startX, sizeBox, i
     startX += (sizeBox * 2) + interval
   }
 
-  return BarKey
+  return fillColor + "" + fillBox + "" + notFillBox
 }
 
 function UpdatePosBars(sprite, maxHP, hp, offsetY, color, scene, type, id, typeBar, hpInBox) {
-  let bar = gameStore.StatusLayer.bars[type + id + typeBar];
+  let bar = getBar(type, id, typeBar);
   if (bar) {
+
+    if (!Scene.cameras.main.worldView.contains(sprite.x, sprite.y)) {
+      if (bar.bar.visible) bar.bar.setVisible(false)
+      return
+    } else {
+      if (!bar.bar.visible) bar.bar.setVisible(true)
+    }
+
     let displayHeight = sprite.displayHeight;
-    if (displayHeight === 0 && sprite.hasOwnProperty('unitBody')) {
-      displayHeight = sprite.unitBody.displayHeight * sprite.scale;
+    if (type === 'unit') {
+      displayHeight = sprite.displayHeight;
     }
 
     let boxY = Math.round(offsetY + displayHeight * sprite.originY);
@@ -156,28 +197,34 @@ function UpdatePosBars(sprite, maxHP, hp, offsetY, color, scene, type, id, typeB
   }
 }
 
+function getBar(type, id, typeBar) {
+  return gameStore.StatusLayer.bars[type + id + typeBar]
+}
+
 function createObjectBars(id) {
   let obj = gameStore.objects[id];
-  if (obj && obj.hp > -2) {
-    if ((obj.build && obj.complete >= 100) || !obj.build) {
 
-      ClearBars('object', obj.id, 'build');
+  if (!obj) return;
 
+  if (obj.hp > -2) {
+
+    ClearBars('object', obj.id, 'build');
+
+    if (obj.hp !== obj.max_hp) {
       if (obj.hp >= 0) {
         CreateMapBar(obj.objectSprite, obj.max_hp, obj.hp, 0, null, Scene, 'object', obj.id, 'hp', 50);
       } else {
         CreateMapBar(obj.objectSprite, 250, 250, 0, null, Scene, 'object', obj.id, 'hp', 50);
       }
-
-      if (obj.max_energy > 0) {
-        CreateMapBar(obj.objectSprite, obj.max_energy / 100, obj.current_energy / 100, 7,
-          0x00ffd6, Scene, 'object', obj.id, 'energy', 5);
-      }
-
-    } else if (obj.build && obj.complete < 100) {
-      CreateMapBar(obj.objectSprite, obj.max_hp, obj.hp, 0, null, Scene, 'object', obj.id, 'hp', 50);
-      CreateMapBar(obj.objectSprite, 100, obj.complete, 7, 0xff00e1, Scene, 'object', obj.id, 'build', 5);
     }
+  } else if (obj.build && obj.complete < 100) {
+    CreateMapBar(obj.objectSprite, obj.max_hp, obj.hp, 0, null, Scene, 'object', obj.id, 'hp', 50);
+    CreateMapBar(obj.objectSprite, 100, obj.complete, 7, 0xff00e1, Scene, 'object', obj.id, 'build', 5);
+  }
+
+  if (obj.max_energy > 0) {
+    CreateMapBar(obj.objectSprite, obj.max_energy / 100, obj.current_energy / 100, 7,
+      0x00ffd6, Scene, 'object', obj.id, 'energy', 5);
   }
 }
 
@@ -195,4 +242,4 @@ function GetColorDamage(percentHP) {
   }
 }
 
-export {CreateMapBar, ClearBars, createObjectBars, UpdatePosBars, cacheBars}
+export {CreateMapBar, ClearBars, createObjectBars, UpdatePosBars, cacheBars, createBox}

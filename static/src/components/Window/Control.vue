@@ -1,5 +1,6 @@
 <template>
   <div class="windowsHead"
+       v-if="checkViewPort"
        @mousedown="mouseDown"
        @mouseup="mouseUp">
     <span class="windowsHeadTitle">{{ head }}</span>
@@ -10,6 +11,8 @@
 </template>
 
 <script>
+import {gameStore} from "../../game/store";
+
 export default {
   name: "Control",
   props: ['head', 'move', 'close', 'refWindow', 'resizeFunc', 'minSize', 'closeFunc', 'noHeight', 'noWidth', 'noPos'],
@@ -29,6 +32,14 @@ export default {
   computed: {
     wState() {
       return this.$store.getters.getInterfaceState
+    },
+    checkViewPort() {
+
+      setTimeout(function () {
+        this.getWindowState()
+      }.bind(this), 100)
+
+      return this.$store.getters.getCheckViewPort
     }
   },
   destroyed() {
@@ -36,44 +47,59 @@ export default {
     this.setState(this.state.id, this.state.left, this.state.top, this.state.height, this.state.width, false);
   },
   mounted() {
-    let app = this;
-    let block = app.$parent.$refs[app.$props.refWindow];
-    app.block = block;
-
-    if (!app.block) return;
-
-    if (this.wState && this.wState[app.$props.refWindow]) {
-      if (!app.$props.noPos) block.style.left = this.wState[app.$props.refWindow].left + "px";
-      if (!app.$props.noPos) block.style.top = this.wState[app.$props.refWindow].top + "px";
-      if (!app.$props.noHeight) block.style.height = this.wState[app.$props.refWindow].height + "px";
-      if (!app.$props.noWidth) block.style.width = this.wState[app.$props.refWindow].width + "px";
-    }
-
-    this.setState(block.id, $(block).position().left, $(block).position().top, $(block).height(), $(block).width(), true);
-
-    if (app.$props.resizeFunc) {
-
-      app.$props.resizeFunc(null, null, $(block));
-
-      $(block).resizable({
-        minHeight: app.$props.minSize.height,
-        minWidth: app.$props.minSize.width,
-        handles: "all",
-        resize: function (event, ui) {
-          app.$props.resizeFunc(event, ui, $(this))
-        },
-        stop: function (e, ui) {
-          app.setState(this.id, $(this).position().left, $(this).position().top, $(this).height(), $(this).width(), true);
-        }
-      });
-    }
-
-    app.checkModalInViewPort()
+    this.getWindowState()
   },
   methods: {
+    playSound(sound, k) {
+      if (sound === "button_press.mp3") k = 0.2
+      if (sound === "select_sound.mp3") k = 0.1
+
+      this.$store.dispatch('playSound', {
+        sound: sound,
+        k: k,
+      });
+    },
+    getWindowState() {
+      let app = this;
+      let block = app.$parent.$refs[app.$props.refWindow];
+      app.block = block;
+
+      if (!app.block) return;
+
+      if (this.wState && this.wState[app.$props.refWindow]) {
+        if (!app.$props.noPos) block.style.left = this.wState[app.$props.refWindow].left + "px";
+        if (!app.$props.noPos) block.style.top = this.wState[app.$props.refWindow].top + "px";
+        if (!app.$props.noHeight) block.style.height = this.wState[app.$props.refWindow].height + "px";
+        if (!app.$props.noWidth) block.style.width = this.wState[app.$props.refWindow].width + "px";
+      }
+
+      this.setState(block.id, $(block).position().left, $(block).position().top, $(block).height(), $(block).width(), true);
+
+      if (app.$props.resizeFunc) {
+
+        app.$props.resizeFunc(null, null, $(block));
+
+        $(block).resizable({
+          minHeight: app.$props.minSize.height,
+          minWidth: app.$props.minSize.width,
+          handles: "all",
+          resize: function (event, ui) {
+            app.$props.resizeFunc(event, ui, $(this))
+          },
+          stop: function (e, ui) {
+            app.setState(this.id, $(this).position().left, $(this).position().top, $(this).height(), $(this).width(), true);
+          }
+        });
+      }
+
+      app.checkModalInViewPort()
+    },
     checkModalInViewPort() {
       let app = this;
       let block = app.block;
+      if (!block) {
+        return;
+      }
 
       let top = $(block).position().top;
       let left = $(block).position().left;
@@ -88,10 +114,6 @@ export default {
         left = $(window).width() - $(block).outerWidth() - 5
       }
 
-      //console.log(block.id)
-      //console.log($(window).height(), $(window).width());
-      //console.log($(block).outerWidth(), $(block).outerHeight(), window.screen.availWidth + ':' + window.screen.availHeight);
-
       $(block).css({left: left, top: top});
 
       return {left: left, top: top};
@@ -99,6 +121,8 @@ export default {
     mouseDown() {
       let app = this;
       let block = app.block;
+
+      gameStore.MouseMoveInterface = true;
 
       if (this.$props.move) {
         $(block).draggable({
@@ -118,13 +142,20 @@ export default {
             }
           },
           stop: function (event, ui) {
+            gameStore.MouseMoveInterface = false;
             app.checkModalInViewPort();
             app.setState(block.id, $(block).position().left, $(block).position().top, $(block).height(), $(block).width(), true);
+            $(block).draggable({
+              disabled: true,
+            });
           }
         });
       }
     },
     mouseUp() {
+
+      gameStore.MouseMoveInterface = false;
+
       $(this.block).draggable({
         disabled: true,
       });
@@ -166,6 +197,8 @@ export default {
       }
     },
     closeWindow() {
+      this.playSound('window_close.mp3', 0.3)
+
       if (this.$props.closeFunc) {
         this.$props.closeFunc();
       }

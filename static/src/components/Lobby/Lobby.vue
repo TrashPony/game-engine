@@ -1,41 +1,37 @@
 <template>
   <div id="lobbyWrapper">
-    <div class="RankWrapper">
-      <app-session-battle-rank/>
-    </div>
+    <template>
 
-    <div id="ServiceTable">
-      <div class="sub" @click.stop="">
-        <div @click.stop="openService('CreateGameBlock')">
-          <img src="https://img.icons8.com/material/40/000000/exit.png"/>
-          <h4>Создать</h4>
+      <app-start-game/>
+
+      <div id="ServiceTable">
+        <h2 class="head_category">Меню: </h2>
+        <div class="sub" @click.stop="">
+          <div @mouseover="playSound('select_sound.mp3', 0.3)">
+            <div class="image">
+              <div></div>
+            </div>
+            <h4>поле 1</h4>
+          </div>
+
+          <div @mouseover="playSound('select_sound.mp3', 0.3)">
+            <div class="image">
+              <div></div>
+            </div>
+            <h4>поле 2</h4>
+          </div>
         </div>
       </div>
 
-      <div class="sub" @click.stop="">
-        <div @click.stop="openService('')">
-          <img src="https://img.icons8.com/material/40/000000/exit.png"/>
-          <h4>Поиск игорей</h4>
-        </div>
-      </div>
-
-      <h2 class="head_category">Какаято хуйня: </h2>
-      <div class="sub" @click.stop="">
-        <div id="hangarButton">
-          <img src="https://img.icons8.com/ios-glyphs/30/000000/hangar.png"/>
-          <h4>Какаято хуйня</h4>
-          <div class="help_point_menu"></div>
-        </div>
-      </div>
-    </div>
-
-    <app-create-game v-if="openComponents['CreateGameBlock'] && openComponents['CreateGameBlock'].open"/>
+    </template>
   </div>
 </template>
 
 <script>
-import SessionBattleRank from './SessionBattleRank'
 import CreateGame from "../CreateGame/CreateGame";
+import {gameStore} from "../../game/store";
+import StartGame from "../StartGame/StartGame";
+import {RemoveOldMap} from "../../game/map/remove_old_map";
 
 export default {
   name: "Lobby",
@@ -43,13 +39,42 @@ export default {
     return {}
   },
   mounted() {
+
     this.$store.dispatch("sendSocketData", JSON.stringify({
       event: "GetPlayers",
       service: "system",
     }))
+
+    this.$store.dispatch("sendSocketData", JSON.stringify({
+      event: "UpdateSocialMechanics",
+      service: "system",
+    }))
+
+    gameStore.gameReady = false;
+    gameStore.gameDataInit = {
+      data: false,
+      sendRequest: false,
+    }
+
+    RemoveOldMap()
+
+    this.$store.commit({
+      type: 'setVisibleLoader',
+      visible: false,
+    });
   },
   methods: {
+    playSound(sound, k) {
+      if (sound === "button_press.mp3") k = 0.2
+      if (sound === "select_sound.mp3") k = 0.1
+
+      this.$store.dispatch('playSound', {
+        sound: sound,
+        k: k,
+      });
+    },
     openService(service, meta, component = '', forceOpen = false) {
+      this.playSound('button_press.mp3', 0.3)
       this.sub = '';
       this.$store.commit({
         type: 'toggleWindow',
@@ -63,11 +88,11 @@ export default {
   computed: {
     openComponents() {
       return this.$store.getters.getNeedOpenComponents
-    }
+    },
   },
   components: {
-    AppSessionBattleRank: SessionBattleRank,
     AppCreateGame: CreateGame,
+    AppStartGame: StartGame,
   }
 }
 </script>
@@ -78,14 +103,14 @@ export default {
   width: 100%;
   text-align: center;
   background-color: #7f7f7f;
-  background-image: url('../../assets/bases/base.jpg');
+  background-image: url('../../assets/bases/base.png');
   background-size: cover;
   background-attachment: fixed;
   background-position: center;
 }
 
 #ServiceTable {
-  top: 60px;
+  top: 70px;
   left: 5px;
   text-align: center;
   float: left;
@@ -221,12 +246,12 @@ export default {
   min-width: 200px;
   border-radius: 5px;
   top: calc(100% + 8px);
-  filter: drop-shadow(0px 0px 6px black);
+  filter: drop-shadow(0px 0px 1px black);
   box-shadow: 0 0 2px black;
 }
 
 .sub > div {
-  height: 20px;
+  height: 28px;
   clear: both;
   background: #0cc2fb;
   border: 1px solid rgba(37, 160, 225, 0.5);
@@ -247,21 +272,29 @@ export default {
   position: relative;
 }
 
-.sub > div img {
-  height: 20px;
-  width: 20px;
-  background: #8cb3c7;
+.sub > div .image {
+  height: 28px;
+  width: 31px;
   float: left;
   transition: 0.1s;
+  border-right: 2px solid rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+}
+
+.sub > div .image > div {
+  height: 28px;
+  width: 28px;
   background-size: contain;
+  background-position: center;
+  filter: contrast(50%) sepia(100%) hue-rotate(346deg) brightness(0.8) saturate(800%) drop-shadow(0px 1px 0px black);
 }
 
 .sub > div h4 {
   margin: 0 5px;
   float: left;
   opacity: 0.8;
-  font-size: 12px;
-  line-height: 21px;
+  font-size: 14px;
+  line-height: 28px;
 }
 
 .sub > div:hover {
@@ -281,7 +314,7 @@ export default {
   position: absolute;
   top: 5px;
   left: 5px;
-  width: 270px;
+  width: 310px;
   background: none;
   box-shadow: none;
   z-index: 0;
@@ -397,17 +430,29 @@ export default {
 
 @media (max-width: 1000px) {
   .sub > div h4 {
-    font-size: 10px;
-    line-height: 17px;
+    font-size: 14px;
+    line-height: 24px;
   }
 
   .sub > div {
-    height: 16px;
+    height: 24px;
   }
 
-  .sub > div img {
-    height: 17px;
-    width: 17px;
+  .sub > div .image {
+    height: 24px;
+    width: 27px;
+    float: left;
+    transition: 0.1s;
+    border-right: 2px solid rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+  }
+
+  .sub > div .image > div {
+    height: 24px;
+    width: 24px;
+    background-size: contain;
+    background-position: center;
+    filter: contrast(50%) sepia(100%) hue-rotate(346deg) brightness(0.8) saturate(800%) drop-shadow(0px 1px 0px black);
   }
 
   #ServiceTable {
@@ -415,7 +460,7 @@ export default {
   }
 
   .sub {
-    min-height: 17px;
+    min-height: 20px;
     filter: drop-shadow(0px 0px 2px black);
     box-shadow: 0 0 2px black;
   }

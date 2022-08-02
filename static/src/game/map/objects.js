@@ -1,46 +1,84 @@
 import {gameStore} from "../store";
 import {GetGlobalPos} from "./gep_global_pos";
+import {CreateSpriteTurret} from "./structures/turret";
+import store from "../../store/store";
+
+
+let template = {
+  id: 0,
+  x: 0,
+  y: 0,
+  rotate: 0,
+  height: 0,
+
+  hp: 0,
+  max_hp: 0,
+  current_energy: 0,
+  max_energy: 0,
+  view_range: 0,
+
+  x_shadow_offset: 0,
+  y_shadow_offset: 0,
+  shadow_intensity: 0,
+  owner_id: 0,
+  priority: 0,
+
+  team_id: 0,          // byte
+  work: false,         // byte
+  build: false,        // byte
+  scale: 0,            // byte
+  shadow: false,       // byte
+  animate: false,      // byte
+  animation_speed: 0,  // byte
+  animate_loop: false, // byte
+
+  type: "",
+  texture: "",
+
+  weapons: [{
+    gun_rotate: 0,
+    real_x_attach: 0,
+    real_y_attach: 0,
+    number: 0,   // byte
+    x_anchor: 0, // byte
+    y_anchor: 0, // byte
+  }],
+
+  geo_data: [{
+    x: 0,
+    y: 0,
+    radius: 0,
+  }],
+}
 
 function CreateObject(coordinate, x, y, noBmd, scene) {
 
-  if (coordinate.type === "mission") {
-    noBmd = true
+  coordinate.objectSprite = gameObjectCreate(x, y, coordinate.texture, coordinate.scale,
+    coordinate.shadow && coordinate.shadow_intensity > 0 && store.getters.getSettings.ObjectShadows,
+    coordinate.rotate, coordinate.x_shadow_offset, coordinate.y_shadow_offset, coordinate.shadow_intensity,
+    noBmd || coordinate.build, 'sprites', scene, gameStore.map.id, coordinate);
+
+  coordinate.objectSprite.setDepth(coordinate.height);
+  if (coordinate.objectSprite.shadow) {
+    coordinate.objectSprite.shadow.setDepth(coordinate.height - 1);
   }
 
-  let structures = ['unknown_civilization_jammer', 'repair_station', 'turret', 'beacon', 'storage', 'shield',
-    'generator', 'missile_defense', 'turret', 'turret', 'jammer', 'radar', 'meteorite_defense', 'extractor',
-    'explores_antenna', 'expensive_tower'];
-
-  let atlasName = coordinate.type;
-  if (structures.includes(coordinate.type)) {
-    atlasName = 'structures';
-  }
-
-  coordinate.objectSprite = gameObjectCreate(x, y, coordinate.texture, coordinate.scale, coordinate.shadow, coordinate.position_data.rotate,
-    coordinate.x_shadow_offset, coordinate.y_shadow_offset, coordinate.shadow_intensity,
-    noBmd || coordinate.build, atlasName, scene, coordinate.map_id);
-
-  if (coordinate.objectSprite) {
-    coordinate.objectSprite.setDepth(coordinate.position_data.height);
-    if (coordinate.objectSprite.shadow) {
-      coordinate.objectSprite.shadow.setDepth(coordinate.position_data.height - 1);
-    }
+  if (coordinate.type === "turret") {
+    CreateSpriteTurret(coordinate, coordinate.objectSprite, scene)
   }
 
   return coordinate
 }
 
-function gameObjectCreate(x, y, texture, scale, needShadow, rotate, xShadowOffset, yShadowOffset, shadowIntensity, noBmd, atlasName, scene, mapID) {
+function gameObjectCreate(x, y, texture, scale, needShadow, rotate, xShadowOffset, yShadowOffset, shadowIntensity, noBmd, atlasName, scene, mapID, coordinate) {
+  if (!gameStore.gameReady) return;
+
   let shadow;
 
   let pos = GetGlobalPos(x, y, mapID);
   if (needShadow) {
     shadow = scene.make.image({
-      x: pos.x + xShadowOffset,
-      y: pos.y + yShadowOffset,
-      frame: texture,
-      add: true,
-      key: atlasName,
+      x: pos.x + xShadowOffset, y: pos.y + yShadowOffset, frame: texture, add: true, key: atlasName,
     });
 
     shadow.setOrigin(0.5);
@@ -51,11 +89,7 @@ function gameObjectCreate(x, y, texture, scale, needShadow, rotate, xShadowOffse
   }
 
   let object = scene.make.image({
-    x: pos.x,
-    y: pos.y,
-    frame: texture,
-    add: true,
-    key: atlasName,
+    x: pos.x, y: pos.y, frame: texture, add: true, key: atlasName,
   });
   object.setOrigin(0.5);
   object.setScale(scale / 100);
@@ -63,80 +97,7 @@ function gameObjectCreate(x, y, texture, scale, needShadow, rotate, xShadowOffse
 
   object.shadow = shadow;
 
-  if (!needShadow && !noBmd && gameStore.mapsState[mapID].bmdTerrain && !texture.includes('geyser')) {
-    object.setPosition(x, y);
-    gameStore.mapsState[mapID].bmdTerrain.bmd.draw(object);
-    object.destroy();
-    object = null;
-  }
-
   return object
 }
 
-function CreateAnimate(coordinate, x, y, scene) {
-
-  if (coordinate.unit_overlap) {
-    coordinate.objectSprite = gameAnimateObjectCreate(x, y, coordinate.animate_sprite_sheets, coordinate.scale, coordinate.shadow,
-      coordinate.position_data.rotate, coordinate.animation_speed, coordinate.animate_loop, scene, coordinate.map_id);
-  } else {
-    coordinate.objectSprite = gameAnimateObjectCreate(x, y, coordinate.animate_sprite_sheets, coordinate.scale, coordinate.shadow,
-      coordinate.position_data.rotate, coordinate.animation_speed, coordinate.animate_loop, scene, coordinate.map_id);
-  }
-
-  if (coordinate.objectSprite) {
-    coordinate.objectSprite.setDepth(coordinate.height);
-    if (coordinate.objectSprite.shadow) coordinate.objectSprite.shadow.setDepth(coordinate.height - 1);
-  }
-}
-
-function gameAnimateObjectCreate(x, y, texture, scale, needShadow, rotate, speed, needAnimate, scene, mapID) {
-  let shadow;
-
-  let pos = GetGlobalPos(x, y, mapID);
-
-  scene.anims.create({
-    key: texture,
-    frames: scene.anims.generateFrameNumbers(texture),
-    frameRate: speed,
-    repeat: -1
-  });
-
-  if (needShadow) {
-
-    shadow = scene.make.sprite({
-      x: pos.x + scene.shadowXOffset,
-      y: pos.y + scene.shadowYOffset,
-      key: texture,
-      add: true
-    });
-
-    shadow.setOrigin(0.5);
-    shadow.setScale(scale / 100);
-    shadow.setAngle(rotate);
-    shadow.setTint(0x000000);
-
-    if (needAnimate) {
-      shadow.anims.play(texture);
-    }
-  }
-
-  let object = scene.make.sprite({
-    x: pos.x,
-    y: pos.y,
-    key: texture,
-    add: true
-  });
-  object.setOrigin(0.5);
-  object.setScale(scale / 100);
-  object.setAngle(rotate);
-
-  if (needAnimate) {
-    object.anims.play(texture);
-  }
-
-  object.shadow = shadow;
-
-  return object
-}
-
-export {CreateObject, CreateAnimate, gameObjectCreate, gameAnimateObjectCreate}
+export {CreateObject, gameObjectCreate}

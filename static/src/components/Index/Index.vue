@@ -10,7 +10,7 @@
         </div>
 
         <div class="play_button_wrapper">
-          <div class="play_button" @click="to('/gate')">
+          <div class="play_button" @click="to('/lobby')">
             PLAY
           </div>
         </div>
@@ -66,7 +66,7 @@ body {
 }
 
 .index_background {
-  background: url('../../assets/bases/base.jpg') center no-repeat;
+  background: url('../../assets/bases/base.png') center no-repeat;
   background-attachment: fixed;
   background-size: cover;
   height: 100vh;

@@ -2,12 +2,13 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   entry: './src/main.js',
   output: {
-    path: path.resolve(__dirname, './dist'),
-    publicPath: '/',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '',
     filename: 'build-[hash:6].js'
   },
   module: {
@@ -57,15 +58,16 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.esm.js',
+      'assets': path.resolve(__dirname, 'src/assets/')
     },
-    extensions: ['*', '.js', '.vue']
+    extensions: ['*', '.js', '.vue', '...']
   },
   devServer: {
     historyApiFallback: true,
     noInfo: true,
     overlay: true,
-    port: 8082,
+    port: 8083,
   },
   performance: {
     hints: false
@@ -99,12 +101,16 @@ if (process.env.NODE_ENV === 'production') {
         NODE_ENV: '"production"'
       }
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false
+    new UglifyJSPlugin({
+        "uglifyOptions":
+          {
+            compress: {
+              warnings: false
+            },
+            sourceMap: true
+          }
       }
-    }),
+    ),
     new webpack.LoaderOptionsPlugin({
       minimize: true
     })

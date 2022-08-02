@@ -54,7 +54,7 @@
     width: 100%;
     text-align: center;
     background-color: #7f7f7f;
-    background-image: url('../../assets/bases/base.jpg');
+    background-image: url('../../assets/bases/base.png');
     background-size: cover;
     background-attachment: fixed;
     background-position: center;
@@ -70,6 +70,9 @@
     pointer-events: auto;
     padding: 5px;
     box-shadow: inset 0 0 2px black;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .mask {

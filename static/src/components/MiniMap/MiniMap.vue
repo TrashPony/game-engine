@@ -1,21 +1,19 @@
 <template>
-  <div id="miniMap" ref="miniMap" @mousedown="toUp">
+  <div id="miniMap" ref="miniMap"
+       @mouseup="moveCamera = false"
+       @mouseout="moveCamera = false"
+       @mousedown="fastMove($event, true)"
+       @mousemove="fastMove($event)">
 
-    <app-control v-bind:head="'Карта'"
-                 v-bind:move="true"
-                 v-bind:close="false"
-                 v-bind:refWindow="'miniMap'"
-                 v-bind:resizeFunc="resize"
-                 v-bind:minSize="{height: 100, width: 100}"/>
+    <div class="zoomButton" @mousedown="mouseZoomPress(-0.0025)" @mouseup="mouseZoomUp" title="зум"
+         :style="{backgroundImage: 'url(' + require('../../assets/icons/zoom_minus.png') + ')'}"
+         style="top: calc(5% + 25px);">
 
-    <app-mini-map-canvas/>
-
-    <div class="zoomButton" title="на транспорт" @mousedown="mouseZoomPress(-0.0025)" @mouseup="mouseZoomUp"
-         style="background-image: url('https://img.icons8.com/officel/16/000000/zoom-out.png'); top: 44px;">
     </div>
 
-    <div class="zoomButton" @mousedown="mouseZoomPress(+0.0025)" @mouseup="mouseZoomUp"
-         style="background-image: url('https://img.icons8.com/officel/16/000000/zoom-in.png'); top: 19px;">
+    <div class="zoomButton" @mousedown="mouseZoomPress(+0.0025)" @mouseup="mouseZoomUp" title="зум"
+         :style="{backgroundImage: 'url(' + require('../../assets/icons/zoom_plus.png') + ')'}"
+         style="top: calc(5%);">
     </div>
 
   </div>
@@ -23,17 +21,38 @@
 
 <script>
 import Control from '../Window/Control';
-import MiniMapCanvas from './MiniMapCanvas';
-
 import {Scene} from '../../game/create';
 import {gameStore} from "../../game/store";
+import {userUnit} from "../../game/update";
+import {GetGlobalPos} from "../../game/map/gep_global_pos";
+import {minimap} from "../../game/interface/mini_map";
 
 export default {
   name: "MiniMap",
   data() {
     return {
-      zoomChange: false
+      zoomChange: false,
+      moveCamera: false,
     }
+  },
+  created() {
+    window.addEventListener('wheel', this.wheelZoom);
+  },
+  mounted() {
+    let wait = setInterval(function () {
+      if (minimap.init) {
+        let miniMap = document.getElementById("miniMap")
+        if (miniMap) {
+          miniMap.style.width = (minimap.size - 5) + 'px'
+          miniMap.style.height = (minimap.size - 22) + 'px'
+          miniMap.style.display = 'block'
+          clearInterval(wait)
+        }
+      }
+    }, 100)
+  },
+  destroyed() {
+    window.removeEventListener('wheel', this.wheelZoom);
   },
   methods: {
     toUp() {
@@ -61,78 +80,109 @@ export default {
       app.zoomChange = true;
       let zoomer = setInterval(function () {
         if (app.zoomChange) {
-          Scene.cameras.main.setZoom(Scene.cameras.main.zoom + size);
-
-          if (gameStore.mapEditor) return;
-
-          let minSize = 0.5
-          if (app.currentUser.user_role === 'admin') {
-            minSize = 0.2
-          }
-
-          if (Scene.cameras.main.zoom < minSize) {
-            Scene.cameras.main.setZoom(minSize);
-          } else if (Scene.cameras.main.zoom > 2) {
-            Scene.cameras.main.setZoom(2);
-          }
+          app.zoom(null, size)
         } else {
           clearInterval(zoomer);
         }
       });
     },
+    wheelZoom(event, size) {
+      if (!gameStore.HoldAttackMouse) {
+        this.zoom(event, size)
+      }
+    },
+    zoom(event, size) {
+
+      if (event) {
+        size = (event.deltaY * 0.001) * -1
+      }
+
+      let zoom = Scene.cameras.main.zoom + size
+      let minSize = 0.5
+
+      if (zoom < minSize) {
+        zoom = minSize
+      } else if (zoom > 2) {
+        zoom = 2
+      }
+
+      Scene.cameras.main.setZoom(zoom);
+      this.$store.dispatch('changeSettings', {
+        name: "ZoomCamera",
+        count: zoom * 100
+      });
+
+      this.$store.commit({
+        type: 'setZoomCamera',
+        zoom: zoom,
+      });
+    },
     mouseZoomUp() {
       this.zoomChange = false;
     },
+    fastMove(e, on) {
+      if (e.path[0].id !== 'miniMap') return;
+      if (!gameStore.gameSettings.follow_camera || !userUnit) {
+        if (on) this.moveCamera = true;
+
+        let offsetX = gameStore.map.x_size / minimap.size;
+        let offsetY = gameStore.map.y_size / minimap.size;
+
+        if (this.moveCamera) {
+          let x = e.offsetX * offsetX;
+          let y = e.offsetY * offsetY;
+
+          let pos = GetGlobalPos(x, y, gameStore.map.id);
+
+          Scene.cameras.main.stopFollow();
+          Scene.cameras.main.centerOn(pos.x, pos.y);
+        }
+      }
+    },
   },
   computed: {
-    currentUser() {
-      return this.$store.getters.getGameUser
-    },
+    settings() {
+      return this.$store.getters.getSettings
+    }
   },
   components: {
     AppControl: Control,
-    AppMiniMapCanvas: MiniMapCanvas,
   }
 }
 </script>
 
 <style scoped>
 #miniMap, #miniMap .zoomButton {
-  background: rgb(8, 138, 210);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
-  border: 1px solid #25a0e1;
+  /*background: rgb(8, 138, 210);*/
+  box-shadow: 0 0 2px rgba(0, 0, 0, 1), inset 0 0 2px rgba(0, 0, 0, 1);
+  border: 3px solid #25a0e1;
 }
 
 #miniMap {
   position: absolute;
-  height: 200px;
-  width: 200px;
+  height: 178px;
+  width: 195px;
   border-radius: 5px;
-  top: 5px;
-  right: 5px;
+  top: 7px;
+  right: 7px;
   user-select: none;
   padding: 19px 2px 2px;
+  display: none;
 }
 
 #miniMap .zoomButton {
   height: 20px;
   width: 20px;
-  background-color: rgb(19, 76, 105);
-  border-right: transparent;
-  border-bottom-left-radius: 10px;
-  border-top-left-radius: 10px;
-  color: #f9ff00;
-  font-size: 29px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
   line-height: 20px;
-  font-weight: 900;
-  transition: 1s;
-  box-shadow: inset 0 0 2px black;
   background-position: center;
-  background-size: 20px;
-  background-repeat: no-repeat;
+  background-size: contain;
   position: absolute;
   right: calc(100% + 1px);
   top: 22px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 #miniMap .zoomButton:hover {
@@ -151,5 +201,22 @@ export default {
 #miniMap .topButton:nth-child(1) {
   font-size: 22px;
   line-height: 0;
+}
+
+#miniMap .zoomButton .label {
+  font-size: 11px;
+  color: #ffed93;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 0 -1px 1px #000000, 0 -1px 1px #000000, 0 1px 1px #000000, 0 1px 1px #000000, -1px 0 1px #000000, 1px 0 1px #000000, -1px 0 1px #000000, 1px 0 1px #000000, -1px -1px 1px #000000, 1px -1px 1px #000000, -1px 1px 1px #000000, 1px 1px 1px #000000, -1px -1px 1px #000000, 1px -1px 1px #000000, -1px 1px 1px #000000, 1px 1px 1px #000000;
+  margin-top: 2px;
+}
+
+.image {
+  height: 100%;
+  width: 100%;
+  background-size: contain;
+  background-position: center;
+  /*filter: contrast(45%) sepia(100%) hue-rotate(11deg) brightness(0.8) saturate(800%) drop-shadow(1px 1px 0px black);*/
 }
 </style>

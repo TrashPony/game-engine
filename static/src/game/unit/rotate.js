@@ -1,44 +1,39 @@
 import {gameStore} from "../store";
 import {Scene} from "../create";
-import {PositionAttachSprite, ShortDirectionRotateTween} from "../utils/utils";
+import {ShortDirectionRotateTween, ShortDirectionRotateTweenGroup} from "../utils/rotate_sprite";
 
-function SetBodyAngle(unit, angle, time, ignoreOldTween, shadowDist) {
-  SetShadowAngle(unit, time, shadowDist);
+function SetBodyAngle(unit, angle, time, ignoreOldTween, shadowDist, force) {
   if (angle > 180) {
     angle -= 360
+  }
+
+  if (Math.round(unit.sprite.angle) === Math.round(angle) && !force) {
+    return;
+  }
+
+  if (!Scene.cameras.main.worldView.contains(unit.sprite.x, unit.sprite.y)) {
+    unit.sprite.setAngle(angle)
+    return;
   }
 
   ShortDirectionRotateTween(unit.sprite, angle, time);
 }
 
-function RotateUnitGun(id, slot, rotate, ms) {
+function RotateUnitGun(id, ms, rotate, slot) {
   if (!gameStore.gameReady) return;
 
   let unit = gameStore.units[id];
-  if (!unit || !unit.sprite || !unit.weapons[slot]) return;
+  if (!unit || !unit.sprite || !unit.weapons || !unit.weapons[slot]) return;
 
-  ShortDirectionRotateTween(unit.weapons[slot].weapon, rotate - unit.sprite.angle, ms);
-  ShortDirectionRotateTween(unit.weapons[slot].shadow, rotate - unit.sprite.angle, ms);
+  if (Math.round(unit.weapons[slot].weapon.angle) === Math.round(rotate)) {
+    return;
+  }
 
-  let connectWeapons = PositionAttachSprite(45 - unit.sprite.angle, Scene.shadowXOffset * 2);
-  shadowTime(unit.weapons[slot].shadow, connectWeapons.x + unit.weapons[slot].xAttach, connectWeapons.y + unit.weapons[slot].yAttach, ms);
+  if (!Scene.cameras.main.worldView.contains(unit.sprite.x, unit.sprite.y)) {
+    unit.weapons[slot].weapon.setAngle(rotate)
+  } else {
+    ShortDirectionRotateTweenGroup([unit.weapons[slot].weapon], rotate, ms, unit.weapons[slot].weapon.angle)
+  }
 }
 
-function SetShadowAngle(unit, time, shadowDist) {
-  let shadowAngle = 45 - unit.sprite.angle;
-  let connectPoints = PositionAttachSprite(shadowAngle, shadowDist);
-  shadowTime(unit.sprite.bodyShadow, connectPoints.x, connectPoints.y);
-}
-
-function shadowTime(sprite, newX, newY, rotateTime = 10) {
-  Scene.tweens.add({
-    targets: sprite,
-    props: {
-      x: {value: newX, duration: rotateTime, ease: 'Linear'},
-      y: {value: newY, duration: rotateTime, ease: 'Linear'}
-    },
-    repeat: 0,
-  });
-}
-
-export {SetBodyAngle, RotateUnitGun, SetShadowAngle}
+export {SetBodyAngle, RotateUnitGun}

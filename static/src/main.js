@@ -18,9 +18,11 @@ Vue.use({
   }
 });
 
-new Vue({
+let VueEx = new Vue({
   el: '#app',
   router: router,
   store,
   render: h => h(App),
 });
+
+export {VueEx}

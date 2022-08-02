@@ -1,14 +1,24 @@
 <template>
   <div>
+
     <app-game/>
     <app-loader/>
     <router-view/>
+    <app-alerts/>
+
+    <template v-if="$route.path === '/lobby' || $route.path === '/global'">
+      <app-menu-bar/>
+    </template>
   </div>
 </template>
 
 <script>
+import MenuBar from "./components/MenuBar/MenuBar";
 import Game from "./components/Game/Game"
 import Loader from "./components/Loader/Loader"
+import Alerts from "./components/Alerts/Alerts";
+import {gameStore} from "./game/store";
+import {RemoveOldMap} from "./game/map/remove_old_map";
 
 export default {
   name: 'app',
@@ -19,11 +29,52 @@ export default {
   },
   mounted() {
 
+    let app = this;
+    let playerVolume = 0;
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+
+        RemoveOldMap();
+        gameStore.gameReady = false;
+        gameStore.gameDataInit = {
+          data: false,
+          sendRequest: false,
+        }
+        gameStore.exitTab = true
+
+        playerVolume = app.$store.getters.getSettings.volume;
+        app.$store.commit({
+          type: 'setVolume',
+          volume: 0,
+        });
+
+      } else {
+
+        gameStore.exitTab = false
+        app.$store.commit({
+          type: 'setVolume',
+          volume: playerVolume,
+        });
+      }
+    });
+
+    if (this.$route.path === '/lobby' || this.$route.path === '/global') {
+      this.$router.push('/gate');
+    }
+
+    gameStore.appInit = true
   },
-  methods: {},
+  computed: {
+    openComponents() {
+      return this.$store.getters.getNeedOpenComponents
+    },
+  },
   components: {
     AppGame: Game,
     AppLoader: Loader,
+    AppMenuBar: MenuBar,
+    AppAlerts: Alerts,
   }
 }
 </script>
@@ -56,6 +107,7 @@ input {
   border-radius: 5px;
   color: #ff7800;
   text-shadow: 1px 1px 1px black;
+  cursor: pointer;
 }
 
 input[type=text], input[type=password], input[type=number] {
@@ -572,5 +624,28 @@ input[type=range]:focus::-ms-fill-upper {
   border-radius: 5px;
   box-shadow: 0 0 2px white;
   text-shadow: 0 -1px 1px #000000, 0 -1px 1px #000000, 0 1px 1px #000000, 0 1px 1px #000000, -1px 0 1px #000000, 1px 0 1px #000000, -1px 0 1px #000000, 1px 0 1px #000000, -1px -1px 1px #000000, 1px -1px 1px #000000, -1px 1px 1px #000000, 1px 1px 1px #000000, -1px -1px 1px #000000, 1px -1px 1px #000000, -1px 1px 1px #000000, 1px 1px 1px #000000;
+}
+
+.disable {
+  background: grey !important;
+  pointer-events: none !important;
+}
+
+.noSelect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+}
+
+.version {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 1px black;
 }
 </style>

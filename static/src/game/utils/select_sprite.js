@@ -6,7 +6,7 @@ function SelectSprite(x, y, callback, tint, tintOver, radius) {
 
   //let radius = sprite.displayHeight + 5;
 
-  let selectSprite = Scene.make.sprite({
+  let selectSprite = Scene.make.image({
     x: x,
     y: y,
     key: "select_sprite",

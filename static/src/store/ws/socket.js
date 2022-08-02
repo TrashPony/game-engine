@@ -2,54 +2,90 @@ import router from "../../router/router";
 import {gameStore} from "../../game/store";
 import {RemoveOldMap} from "../../game/map/remove_old_map";
 import {CreateGame} from "../../game/create";
-import {RadarWork} from "../../game/radar/work";
-import {CreateDynamicObjects} from "../../game/radar/object";
-import {AddUnitMoveBufferData} from "../../game/unit/move";
-import {RotateUnitGun} from "../../game/unit/rotate";
-import {AddBulletMoveBufferData, FlyLaser} from "../../game/bullet/fly";
-import {FireWeapon} from "../../game/weapon/fire";
-import {ExplosionBullet} from "../../game/weapon/explosion";
+import {BinaryReader} from "./binary_reader";
+import {messagesQueue} from "../../game/update";
+import {CreateDynamicObjects} from "../../game/watch/create";
 
 export default function createSocketPlugin(WS) {
   return store => {
-
+    WS.binaryType = "arraybuffer";
     WS.onopen = function () {
       console.log("Connection chat opened..." + this.readyState);
-
       store.commit({
-        type: 'setWSConnectState',
-        connect: true,
-        error: false,
-        reconnect: false,
-        ws: WS,
+        type: 'setWSConnectState', connect: true, error: false, reconnect: false, pending: false, ws: WS,
       });
     };
 
     WS.onclose = function (i) {
+
       store.commit({
-        type: 'setWSConnectState',
-        connect: false,
-        error: true,
-        ws: WS,
+        type: 'setWSConnectState', connect: false, error: true, pending: false, ws: WS,
       });
 
-      if (location.href.includes('lobby') || location.href.includes('global') || location.href.includes('gate')) {
-        router.push('/login');
-      }
+      if (!WS.noRedirect) {
+        if (location.href.includes('lobby') || location.href.includes('global') || location.href.includes('gate')) {
+          router.push('/login');
+        }
 
-      console.log("socket закрыт" + i);
+        console.log("socket close" + i);
+      } else {
+        console.log("socket close soft");
+      }
     };
 
     WS.onmessage = function (msg) {
-      ChatReader(JSON.parse(msg.data), store, WS)
+      if (msg.data instanceof ArrayBuffer) {
+
+        if (gameStore.exitTab) {
+          return;
+        }
+
+        if (gameStore.gameReady) {
+          messagesQueue.push(new Uint8Array((msg.data)));
+        } else {
+          BinaryReader(new Uint8Array((msg.data), store))
+        }
+      } else {
+        WSReader(JSON.parse(msg.data), store, WS)
+      }
     };
   };
 }
 
-
-function ChatReader(response, store, ws) {
+function WSReader(response, store, ws) {
   //console.log(response)
-  if (response.hasOwnProperty("error")) alert(response.event + ": " + response.error);
+
+  //if (response.hasOwnProperty('event')) logMsg(response.event, response)
+  //if (response.hasOwnProperty('e')) logMsg(response.e, response)
+  if (response.hasOwnProperty("error")) {
+    addError(response.event + ": " + response.error, store);
+    return;
+  }
+
+  if (response.event === "gd") {
+    store.commit({
+      type: 'setHandBook', description_items: response.data.description_items,
+    });
+
+    if (response.data.user_interface === "") return;
+    store.commit({
+      type: 'setInterfaceState',
+      user_interface: JSON.parse(response.data.user_interface),
+      allow_window_save: response.data.allow_windows,
+    });
+
+    if (response.data.settings) {
+      store.commit({
+        type: 'setGameSettings', settings: response.data.settings,
+      });
+
+      gameStore.gameSettings = response.data.settings
+    }
+
+    store.commit({
+      type: 'setInitGame', init: true,
+    });
+  }
 
   if (response.event === "GetPlayers") {
     store.commit({
@@ -58,88 +94,75 @@ function ChatReader(response, store, ws) {
       gameUser: response.data.game_user,
       userPlayers: response.data.players,
     });
-  }
-
-  if (response.event === "setGameTypes") {
-    gameStore.gameTypes = response.data
-    gameStore.unitSpriteSize = response.data.unit_sprite_size
-  }
-
-  if (response.event === "CreateLobbySession") {
-    store.commit({
-      type: 'setLobbyState',
-      state: response.data.lobby_session,
-    });
-    store.commit({
-      type: 'setShortInfoMaps',
-      maps: response.data.maps,
-    });
-  }
-
-  if (response.event === "ToBattle") {
-    CreateGame();
-    router.push('/global');
-  }
-
-  if (response.event === "InitBattle") {
-
-    gameStore.gameReady = false;
-    gameStore.unitReady = false;
-
-    RemoveOldMap();
-
-    gameStore.maps = response.data.maps;
     gameStore.player = response.data.player;
 
     store.commit({
-      type: 'setPlayerRole',
-      role: response.data.spectrum ? 'Spectrum' : '',
+      type: 'setServerTime', data: response.data.st,
     });
-
-    gameStore.gameDataInit.data = true;
   }
 
   if (response.event === "RefreshDynamicObj") {
     CreateDynamicObjects(response.data);
   }
 
-  if (response.event === "rw") {
-    RadarWork(response.data.ev)
+  if (response.event === "setGameTypes") {
+    gameStore.gameTypes = response.data
+    gameStore.unitSpriteSize = response.data.unit_sprite_size
+    gameStore.mapBinItems = response.data.map_bin_items
+    gameStore.mapBinItems = Object.assign({}, ...Object.entries(gameStore.mapBinItems).map(([a, b]) => ({[b]: a})))
   }
 
-  if (response.event === "um") {
-    for (let path of response.data) {
-      AddUnitMoveBufferData(path)
-    }
+  if (response.event === "CreateLobbySession") {
+    store.commit({
+      type: 'setLobbyState', state: response.data.lobby_session,
+    });
+    store.commit({
+      type: 'setShortInfoMaps', maps: response.data.maps,
+    });
   }
 
-  if (response.event === "uwr") {
-    for (let rotatePath of response.data) {
-      RotateUnitGun(rotatePath.id, rotatePath.slot_number, rotatePath.rotate, rotatePath.ms);
-    }
+  if (response.event === "ToBattle") {
+    CreateGame();
+    if (!location.href.includes('global')) router.push('/global');
   }
 
-  if (response.event === "fb") {
-    for (let flyBulletPath of response.data) {
-      AddBulletMoveBufferData(flyBulletPath)
-    }
+  if (response.event === "ToLobby") {
+    if (!location.href.includes('lobby')) router.push('/lobby');
   }
 
-  if (response.event === "fl") {
-    for (let flyLaserPath of response.data) {
-      FlyLaser(flyLaserPath)
-    }
+  if (response.event === "InitBattle") {
+
+    if (response.hasOwnProperty("error")) return;
+    RemoveOldMap();
+
+    gameStore.gameReady = false;
+    gameStore.unitReady = false;
+
+    response.data = JSON.parse(response.data)
+
+    gameStore.maps = response.data.maps;
+    gameStore.player = response.data.player;
+    gameStore.playerNames = response.data.player_names;
+
+    store.commit({
+      type: 'setPlayerRole', role: response.data.spectrum ? 'Spectrum' : '',
+    });
+
+    gameStore.BattleData = response.data.battle
+    gameStore.gameDataInit.data = true;
   }
 
-  if (response.event === "ufw") {
-    for (let fireWeapon of response.data) {
-      FireWeapon(fireWeapon)
+  if (response.event === "gsgs") {
+    console.log(response.data)
+    if (response.data.ig) {
+      CreateGame();
+      router.push('/global');
     }
   }
+}
 
-  if (response.event === "eb") {
-    for (let explosion of response.data) {
-      ExplosionBullet(explosion)
-    }
-  }
+function addError(error, store) {
+  store.commit({
+    type: 'addNotification', id: error, removeSec: 5, html: `<span class="importantly">${error}</span>`,
+  });
 }

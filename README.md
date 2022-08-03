@@ -21,6 +21,11 @@
 движке [Phaser3](https://phaser.io/phaser3), в роли клиента может выступать все что умеет в вебсокеты. (или вообще любые
 сокеты с небольшой переделкой api)
 
+#### Игра ["Veliri"](https://yandex.ru/games/app/184316?lang=ru) (Session/MMO/Action) разработаная с помощью этого движка:
+
+([ссылка на видео](https://www.youtube.com/watch?v=7D_ILFRQG2MQ))
+[![Watch the video](/readme_assets/img_1.png)](https://www.youtube.com/watch?v=7D_ILFRQG2MQ)
+
 ### Как работать с движком:
 
 1) форкаете
@@ -110,11 +115,6 @@ npm run dev;
 ```
 
 - заходим http://localhost:8083/
-
-#### Игра ["Veliri"](https://yandex.ru/games/app/184316?lang=ru) (Session/MMO/Action) разработаная с помощью этого движка:
-
-([ссылка на видео](https://www.youtube.com/watch?v=7D_ILFRQG2MQ))
-[![Watch the video](/readme_assets/img_1.png)](https://www.youtube.com/watch?v=7D_ILFRQG2MQ)
 
 <h3 id="create-world">
 Конструктор и создание мира

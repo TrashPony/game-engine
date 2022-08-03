@@ -31,10 +31,6 @@ function preload() {
     }
   });
 
-  require('../assets/audio/sound_effects/interface/equipment_is_ready.mp3')
-  require('../assets/audio/sound_effects/interface/weapon_reload.mp3')
-  require('../assets/audio/sound_effects/interface/weapon_loaded.mp3')
-
   const atlases = [
     {
       key: 'sprites',
@@ -80,10 +76,6 @@ function preload() {
 
   this.load.audio('explosion_3x3', require("../assets/audio/sound_effects/explosions/explosion_3x3.mp3"));
   this.load.audio('explosion_4x3', require("../assets/audio/sound_effects/explosions/explosion_4x3.mp3"));
-
-  // interface sound
-  this.load.audio('self_destruction_countdown', require("../assets/audio/sound_effects/interface/self_destruction_countdown.mp3"));
-  this.load.audio('missile_aim', require("../assets/audio/sound_effects/interface/missile_aim.mp3"));
 }
 
 export {preload}

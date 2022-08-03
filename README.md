@@ -26,9 +26,13 @@
 1) форкаете
 2) работаете
 
-#### Игра ["Veliri"](https://yandex.ru/games/app/184316?lang=ru) (Session/MMO/Action) разработаная с помощью этого движка:
+#### Как запустить:
 
-[![Watch the video](https://sun9-29.userapi.com/impg/c853528/v853528027/1ac49b/owwoeNA0l20.jpg?size=1600x900&quality=96&sign=b68d8b2a16975e67a60f1675c45019ee&type=album)](https://www.youtube.com/watch?v=7D_ILFRQG2MQ)
+1) TODO
+
+#### Игра ["Veliri"](https://yandex.ru/games/app/184316?lang=ru) (Session/MMO/Action) разработаная с помощью этого движка:
+(это ссылка на видео ¯\_(ツ)_/¯)
+[![Watch the video](/readme_assets/img_1.png)](https://www.youtube.com/watch?v=7D_ILFRQG2MQ)
 
 <h3 id="create-world">
 Конструктор и создание мира

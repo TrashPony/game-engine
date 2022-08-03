@@ -25,7 +25,7 @@ func BodyCheckCollisionsOnStaticMap(ph *physical_model.PhysicalModel, x, y int, 
 	x = x*_const.CellSize + _const.CellSize/2
 	y = y*_const.CellSize + _const.CellSize/2
 
-	collision, _ := checkCircleObjectsMap(mp, x, y, ph.GetRadius())
+	collision, _, _, _ := CircleObjectsMap(x, y, ph.GetRadius(), nil, mp, false, 0, 0, true)
 	if collision {
 		return false
 	}

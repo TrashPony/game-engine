@@ -4,7 +4,7 @@
 
 Движок является серверной частью игры решающую вопросы:
 
-- [Конструктор и создание мира](#create-world)
+- [Сессия, игровое поле, GameLoop](#create-world)
 - [Реализация игровых обьектов: "юниты", "строения", "пули"](#game-objects)
 - [Бинарный протокол связи между серверов и клиентом](#binary-protocol)
 - [Ввод пользователя](#input)
@@ -19,7 +19,7 @@
 
 Движок не решает вопросы графики и звука, это лежит на плечах клиента. В данном случае реализован клиент на игровом
 движке [Phaser3](https://phaser.io/phaser3), в роли клиента может выступать все что умеет в вебсокеты. (или вообще любые
-сокеты с небольшой переделкой api)
+сокеты с небольшой переделкой api). Например хорошим клиентом может стать [Ebitengine](https://ebiten.org/).
 
 #### Игра ["Veliri"](https://yandex.ru/games/app/184316?lang=ru) (Session/MMO/Action) разработаная с помощью этого движка:
 
@@ -35,7 +35,8 @@
 
 Сервер состоит из 3х частей:
 
-- `Роутер` - является посредником между клиентом и нодой. Хранит в себе все игровые сущности и библиотеку с математикой, поэтому испортируется как библиотека в ноду.
+- `Роутер` - является посредником между клиентом и нодой. Хранит в себе все игровые сущности и библиотеку с математикой,
+  поэтому испортируется как библиотека в ноду.
 - `Нода` - это сервис где происходит сама "игра", но 1 ноде может быть много игор.
 - `Клиент` - та часть что видит игрок, является "терминалом" который просто выводит происходящие на экран с помощью
   графического движка.
@@ -102,6 +103,7 @@ go run ./node/main.go;
 ```
 
 - запускаем статику
+
 ```bash
 cd .\static\;
 npm run dev;
@@ -112,14 +114,92 @@ cd .\static\;
 npm run build;
 #заходим http://localhost:8086/
 ```
-настрока сети на стороне клиента находится вот [тут](https://github.com/TrashPony/game-engine/blob/master/static/src/const.js) <br>
+
+настрока сети на стороне клиента находится
+вот [тут](https://github.com/TrashPony/game-engine/blob/master/static/src/const.js) <br>
 роутер ловит сообщения сокета вот [тут](https://github.com/TrashPony/game-engine/blob/master/router/main.go#L17)
 
 ### ----
 
 <h3 id="create-world">
-Конструктор и создание мира
+Сессия, игровое поле, GameLoop
 </h3>
+
+Сессию определяет
+[обьект`Battle`](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/battle/battle.go),
+но все игровые обьекты прикрепляются к
+обьекту [карты (`Map`)](https://github.com/TrashPony/game-engine/blob/fc5a4d51a5bd7a4c632f112cea53dd61712179b8/router/mechanics/game_objects/map/map.go#L10)
+который встроен в `Battle`
+.
+
+Все игровые обьекты находящиеся на карте (юниты, пули, строения) привязываются к ней
+полем `MapID` ([например](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/unit/unit.go#L20))
+.
+
+[Юниты](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/factories/units/units.go#L8)
+и [пули](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/factories/bullets/bullets.go#L9) хранятся в
+отдельных стореджах, при добавление в сторедж,
+он [смотрит](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/factories/units/units.go#L56) на
+поле `MapID` и кладет в соотвествующий массив.
+
+Строения же находятся в
+карте [карте (`Map`)](https://github.com/TrashPony/game-engine/blob/fc5a4d51a5bd7a4c632f112cea53dd61712179b8/router/mechanics/game_objects/map/map.go)
+.
+
+```go
+type Map struct {
+// Размер карты в пикселях (в дальности в игре в писелях), в идиале квадрат, прямоугольник не тестировался)
+XSize        int     `json:"x_size"`
+YSize        int     `json:"y_size"`
+// текстуры земли, не на что не влияют, нужны только для отрисовке на клиенте.
+Flore map[int]map[int]*dynamic_map_object.Flore `json:"flore"`
+// Не изменяемые обьекты (например горы и овраги), игрок видит эти обьекты всегда независимо от радара/обзора и они никогда не изменяются
+StaticObjects   map[int]*dynamic_map_object.Object `json:"-"`
+// Тут находятся игровые обьекты с которыми можно взаимодествовать (убить, построить, передвинуть и тд.), та же эти обьекты могут иметь поведение (например турели).
+// Эти обьекты игрок видит только когда открыл их в тумане войны. Когда обьект ушел обратно в туман игрок запоминает его расположение и состояние.
+// Игрок не видит измененияесли с обьектом вне поле его зрения.
+DynamicObjects   []*dynamic_map_object.Object `json:"-"`
+// Карта не плоская и у каждой клетке 16x16px есть своя высота (в текущей реализации это влияет только на пули), если она указана то хранится тут если нет то используется DefaultLevel
+LevelMap [][]*LvlMap `json:"level_map"`
+// высота карты по умолчанию
+DefaultLevel float64 `json:"default_level"`
+// кеширования непроходимых участков из за обьектов на карте для ускорения расчета коллизий. Подробнее смотри раздел коллизий.
+GeoZones [][]*Zone `json:"-"`
+}
+```
+
+#### создание сессии и GameLoop
+
+Создание сессии происходит на ноде при соотвествующем запросе
+по [rpc](https://github.com/TrashPony/game-engine/blob/master/node/rpc/requests.go#L32).
+
+Когда сессия успешно создана, она попадает
+в [сторедж](https://github.com/TrashPony/game-engine/blob/fc5a4d51a5bd7a4c632f112cea53dd61712179b8/node/mechanics/factories/quick_battles/quick_battles.go#L24)
+всех сессий на ноде.
+
+Что бы сессия попала в `GameLoop`,
+специалий [метод](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/game_loop.go#L29) смотрит все
+сессии и если она не инициализиорована то запускает её.
+
+`GameLoop` - это игровой цикл который отслеживает и запускает все игровые механизмы (движения обьектов, расчеты физики,
+обзора,
+нанесения урона, пользовательский ввод и все такое). Одна итерация `GameLoop` это 1 кадр на стороне сервера, время этого
+кадра ровняется [_const.ServerTick](https://github.com/TrashPony/game-engine/blob/master/router/const/const.go#L9) в мс.
+
+Если итерация отработала
+быстрее [_const.ServerTick](https://github.com/TrashPony/game-engine/blob/master/router/const/const.go#L9) то она
+вычесляет дельту и спит это время, если дольше то все лагают.
+
+В время работы итерации собираются сообщения об изменениях или событиях в специальный
+обьект [web_socket.MessagesStore{}](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/game_loop.go#L53)
+.
+
+В конце работы итерации всем
+игрокам [отсылаются сообщения](https://github.com/TrashPony/game-engine/blob/fc5a4d51a5bd7a4c632f112cea53dd61712179b8/node/game_loop/send_game_loop_data.go#L16)
+предворительно попуская все сообщения для всех игроков на фильтр видимости.
+
+Подробнее о протоколе и способе обмена данными в
+разделе [Бинарный протокол связи между серверов и клиентом](#binary-protocol)
 
 <h3 id="game-objects">
 Реализация игровых обьектов: "юниты", "строения", "пули"

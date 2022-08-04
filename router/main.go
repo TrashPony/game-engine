@@ -29,7 +29,7 @@ func main() {
 	httpPort := "8086"
 
 	log.Println("http server started on :" + httpPort)
-	err := http.ListenAndServe(":"+httpPort, handlers.CORS(handlers.AllowCredentials(), originsOk, headersOk, methodsOk)(router)) // запускает веб сервер на 8080 порту
+	err := http.ListenAndServe(":"+httpPort, handlers.CORS(handlers.AllowCredentials(), originsOk, headersOk, methodsOk)(router))
 	if err != nil {
 		log.Panic(err)
 	}

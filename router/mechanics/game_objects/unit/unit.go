@@ -26,7 +26,7 @@ type Unit struct {
 	BehaviorRules  *behavior_rule.BehaviorRules `json:"-"`
 	physicalModel  *physical_model.PhysicalModel
 	gunner         *gunner.Gunner
-	BurstOfShots   *burst_of_shots.BurstOfShots `json:"-"`
+	burstOfShots   *burst_of_shots.BurstOfShots
 	weaponTarget   *target.Target
 	CacheJson      []byte `json:"-"`
 	CreateJsonTime int64  `json:"-"`
@@ -108,11 +108,11 @@ func (u *Unit) GetID() int {
 }
 
 func (u *Unit) GetBurstOfShots() *burst_of_shots.BurstOfShots {
-	if u.BurstOfShots == nil {
-		u.BurstOfShots = &burst_of_shots.BurstOfShots{}
+	if u.burstOfShots == nil {
+		u.burstOfShots = &burst_of_shots.BurstOfShots{}
 	}
 
-	return u.BurstOfShots
+	return u.burstOfShots
 }
 
 func (u *Unit) GetGunner() *gunner.Gunner {

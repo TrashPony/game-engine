@@ -19,8 +19,6 @@ type PhysicalModel struct {
 	Rotate          float64                         `json:"rotate"`           // текущий угол поворота
 	PowerMove       float64                         `json:"power_move"`       // силя которая тянет вперед, текущая
 	Reverse         float64                         `json:"reverse"`          // сила которая тянет назад, текущая
-	PowerLeft       float64                         `json:"power_left"`       // сила движения влево для антиграва
-	PowerRight      float64                         `json:"power_right"`      // сила движения влево для антиграва
 	AngularVelocity float64                         `json:"angular_velocity"` // скорость поворота, текущая
 	XVelocity       float64                         `json:"x_velocity"`       // вектор х
 	YVelocity       float64                         `json:"y_velocity"`       // вектор у
@@ -35,9 +33,9 @@ type PhysicalModel struct {
 	AngularDrag     float64                         `json:"-"`                // сопротивление земли при повороте (AngularVelocity * AngularDrag)
 	Weight          float64                         `json:"-"`                // вес
 	Height          float64                         `json:"height"`           // высота обьекта
-	Length          float64                         `json:"length"`
-	Width           float64                         `json:"width"`  // ширина обькта
-	Radius          int                             `json:"radius"` // радиус окружности обьекта
+	Length          float64                         `json:"length"`           // длинна обьекта
+	Width           float64                         `json:"width"`            // ширина обькта
+	Radius          int                             `json:"radius"`           // радиус окружности обьекта
 	GeoData         []*obstacle_point.ObstaclePoint `json:"-"`
 	PosFunc         func()                          `json:"-"` // функция для принятия положения в конце сервертика
 	Type            string                          `json:"type"`
@@ -298,20 +296,4 @@ func (m *PhysicalModel) SetPos(realX, realY, angle float64) {
 
 func (m *PhysicalModel) GetPhysicalModel() *PhysicalModel {
 	return m
-}
-
-func (m *PhysicalModel) GetPowerLeft() float64 {
-	return m.PowerLeft
-}
-
-func (m *PhysicalModel) SetPowerLeft(powerLeft float64) {
-	m.PowerLeft = powerLeft
-}
-
-func (m *PhysicalModel) GetPowerRight() float64 {
-	return m.PowerRight
-}
-
-func (m *PhysicalModel) SetPowerRight(powerRight float64) {
-	m.PowerRight = powerRight
 }

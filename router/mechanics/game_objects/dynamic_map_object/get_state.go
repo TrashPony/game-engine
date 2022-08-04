@@ -56,9 +56,9 @@ func (o *Object) GetY() int {
 }
 
 func (o *Object) GetBurstOfShots() *burst_of_shots.BurstOfShots {
-	if o.BurstOfShots == nil {
-		o.BurstOfShots = &burst_of_shots.BurstOfShots{}
+	if o.burstOfShots == nil {
+		o.burstOfShots = &burst_of_shots.BurstOfShots{}
 	}
 
-	return o.BurstOfShots
+	return o.burstOfShots
 }

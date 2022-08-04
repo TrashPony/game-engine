@@ -17,7 +17,7 @@ import (
 )
 
 type Object struct {
-	// TODO Сделать обьект Mover и встраивать его во все обьекты которые могут двигатся
+	// TODO привести тут все в порядок
 	// везде где есть приставка Type это оригиналдьные данные типа, все остальное сформированые
 	ID                  int    `json:"id"`
 	TypeID              int    `json:"type_id"`
@@ -78,7 +78,7 @@ type Object struct {
 	visibleObjects          *visible_objects.VisibleObjectsStore
 	physicalModel           *physical_model.PhysicalModel
 	gunner                  *gunner.Gunner
-	BurstOfShots            *burst_of_shots.BurstOfShots `json:"-"`
+	burstOfShots            *burst_of_shots.BurstOfShots
 	weaponTarget            *target.Target
 	ForceTarget             *target.Target `json:"-"`
 	mx                      sync.RWMutex

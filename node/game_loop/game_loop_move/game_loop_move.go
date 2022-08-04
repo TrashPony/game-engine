@@ -32,11 +32,6 @@ type moveObject interface {
 	GetPowerMove() float64
 	GetWidth() float64
 	GetLength() float64
-	GetVelocityRotate() float64
-	GetPowerLeft() float64
-	SetPowerLeft(float64)
-	GetPowerRight() float64
-	SetPowerRight(float64)
 	CheckGrowthPower() bool
 	CheckGrowthRevers() bool
 	CheckLeftRotate() bool

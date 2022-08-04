@@ -52,7 +52,7 @@
 ##### Как подключается нода:
 
 1) когда нода запускается
-   она [стучится по rpc](https://github.com/TrashPony/game-engine/blob/cc521dd593e2c302145b238165cb270b7a2d2dfe/node/rpc/rpc.go#L56)
+   она [стучится по rpc](https://github.com/TrashPony/game-engine/blob/master/node/rpc/rpc.go#L56)
    на `veliriURL` указаный в [main.ini](./main.ini)
 2) дополнительным аргументом передает параметр `nodeUrl` указаный в [main.ini](./main.ini) (этот аргумент передает ip:
    port машины на которой запущена нода)
@@ -62,7 +62,7 @@
    в [сторедже нод](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/factories/nodes/nodes.go#L8),
    дает ему uuid и отсылает как ответ.
 4) при добавление ноды в сторедж, роутер
-   поднимает [обратный rpc канал](https://github.com/TrashPony/game-engine/blob/cc521dd593e2c302145b238165cb270b7a2d2dfe/router/mechanics/factories/nodes/nodes.go#L32)
+   поднимает [обратный rpc канал](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/factories/nodes/nodes.go#L32)
    на ноду для полнодуплексной связи.
 5) когда оба канала открыты, на ноде будут запускатся новые сессии. В случае если на ноде происходит ошибка, или ошибка
    при передаче, или отвал по таймауту то нода удаляется из стореджа.
@@ -70,7 +70,7 @@
 ##### API ноды
 
 Для каждой ноды на роутере есть свое апи выраженое как методы ноды. Посмотреть
-можно [тут](https://github.com/TrashPony/game-engine/blob/cc521dd593e2c302145b238165cb270b7a2d2dfe/router/mechanics/game_objects/node/node.go#L74)
+можно [тут](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/node/node.go#L74)
 , нода ловит эти запросы [тут](https://github.com/TrashPony/game-engine/blob/master/node/rpc/rpc.go#L86).
 
 - `CreateBattle` - создает новую сессию
@@ -90,7 +90,7 @@
 вебсокетам.
 
 Маршрутизация сообщений для игроков на сокетах происходит
-вот [тут](https://github.com/TrashPony/game-engine/blob/cc521dd593e2c302145b238165cb270b7a2d2dfe/router/web_socket/sender.go#L75)
+вот [тут](https://github.com/TrashPony/game-engine/blob/master/router/web_socket/sender.go#L75)
 
 ### Как запустить:
 
@@ -128,7 +128,7 @@ npm run build;
 Сессию определяет
 [обьект`Battle`](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/battle/battle.go),
 но все игровые обьекты прикрепляются к
-обьекту [карты (`Map`)](https://github.com/TrashPony/game-engine/blob/fc5a4d51a5bd7a4c632f112cea53dd61712179b8/router/mechanics/game_objects/map/map.go#L10)
+обьекту [карты (`Map`)](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/map/map.go#L10)
 который встроен в `Battle`
 .
 
@@ -143,7 +143,7 @@ npm run build;
 поле `MapID` и кладет в соотвествующий массив.
 
 Строения же находятся в
-карте [карте (`Map`)](https://github.com/TrashPony/game-engine/blob/fc5a4d51a5bd7a4c632f112cea53dd61712179b8/router/mechanics/game_objects/map/map.go)
+карте [карте (`Map`)](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/map/map.go)
 .
 
 ```go
@@ -168,13 +168,13 @@ GeoZones [][]*Zone `json:"-"`
 }
 ```
 
-#### создание сессии и GameLoop
+#### Создание сессии и GameLoop
 
 Создание сессии происходит на ноде при соотвествующем запросе
 по [rpc](https://github.com/TrashPony/game-engine/blob/master/node/rpc/requests.go#L32).
 
 Когда сессия успешно создана, она попадает
-в [сторедж](https://github.com/TrashPony/game-engine/blob/fc5a4d51a5bd7a4c632f112cea53dd61712179b8/node/mechanics/factories/quick_battles/quick_battles.go#L24)
+в [сторедж](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/factories/quick_battles/quick_battles.go#L24)
 всех сессий на ноде.
 
 Что бы сессия попала в `GameLoop`,
@@ -195,7 +195,7 @@ GeoZones [][]*Zone `json:"-"`
 .
 
 В конце работы итерации всем
-игрокам [отсылаются сообщения](https://github.com/TrashPony/game-engine/blob/fc5a4d51a5bd7a4c632f112cea53dd61712179b8/node/game_loop/send_game_loop_data.go#L16)
+игрокам [отсылаются сообщения](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/send_game_loop_data.go#L16)
 предворительно попуская через фильтр видимости.
 
 Подробнее о протоколе и способе обмена данными в
@@ -204,6 +204,107 @@ GeoZones [][]*Zone `json:"-"`
 <h3 id="game-objects">
 Реализация игровых обьектов: "юниты", "строения", "пули"
 </h3>
+
+"Юниты", "строения", "пули" - это обьекты которые находятся на карте, имеют физическую модель и обрабатываются
+в [`GameLoop`](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/game_loop.go).
+
+#### Юниты
+
+Юниты - это обьекты которые перемещаются по карте своим ходом. В игровом представление может быть как танк так и
+человек.
+
+Характиристики юнита определяет
+его ["тело"](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/body/body.go#L3)
+тело представляет собой куб (длинна, ширина, высота). Параметр `Radius` для быстрый расчетов где не нужна
+точность. Тело юнита имеет дальность обзора, слоты под оружие и тип шасси который определяет механику движения.
+
+![This is an image](./readme_assets/img_3.png)<br>
+<sub>красный квадрат это длинна, ширина. Синий круг `Radius`. Высота влияет на пули.</sub>
+
+```go
+type Body struct {
+Texture       string              `json:"texture"` // текстура для отрисовки на клиенте.
+MaxHP         int                 `json:"max_hp"`
+Scale         int                 `json:"scale"`  // сервер заточен на текстуры размером 128х128px, это параметр говорит % от этого размера. Этот параметр влияет на все параметры габаритов и якорей для оружия (подробнее в разделе оружия).
+Length        int                 `json:"length"` // длинна полигона (Length * (Scale/100))
+Width         int                 `json:"width"`  // ширина полигона (Width * (Scale/100))
+Height        int                 `json:"height"` // высота полигона (Height * (Scale/100))
+Radius        int                 `json:"radius"` // радиус корпуса для простого расчета колизи в поиске пути
+RangeView     int                 `json:"range_view"`  // дальность видимости
+RangeRadar    int                 `json:"range_radar"` // дальность радара
+Weapons       map[int]*WeaponSlot `json:"weapons"`      // слоты и якоря для оружия (подробнее в разделе оружия)
+ChassisType   string              `json:"chassis_type"` // тип шасси, в текущий реализации есть только гусеницы. Можно реализовать свою механику перемещания. (например антиграв, колеса, полет)
+Speed         float64             `json:"speed"` // максимальная скорость движения (W)
+ReverseSpeed  float64             `json:"-"`     // максимальная скорость движения назад (S)
+PowerFactor   float64             `json:"power_factor"`// сила ускорения
+ReverseFactor float64             `json:"-"`           // сила ускорения назад (тормоз)
+TurnSpeed     float64             `json:"turn_speed"`  // скорость поворота
+MoveDrag      float64             `json:"move_drag"` // сила трения при движение
+AngularDrag   float64             `json:"-"`         // сила трения при повороте
+Weight        float64             `json:"-"`           // вес (влияет на столкновения)
+}
+```
+
+Параметры связанные с
+физикой [перетекают](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/unit/physical_model.go#L21)
+в
+структуру [физической модели](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/physical_model/physical_model.go)
+при первом обращение к ней.
+
+#### Строения
+
+Строения- это обьекты которые не могут самостоятельно перемещатся или не могут перемещатся вообще. У строений нет "тела"
+как у юнитов. Их физическую модель
+представляет [массив](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/dynamic_map_object/object.go#L44)
+из
+непроходимых [точек](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/obstacle_point/obstacle_point.go#L7)
+.
+
+![This is an image](./readme_assets/img_4.png)<br>
+
+При инициализации или движение обьекта геодата собирается в
+методе [SetGeoData](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/dynamic_map_object/geo_data.go)
+и после регестрируется
+в [Map.GeoZones](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/map/geo_zone.go)
+
+Некоторые строения как и юниты могут иметь дальность обзора, оружие
+и [поведение](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/game_loop_structure/game_loop_structure.go)
+.
+
+#### Общее (Юниты/Строения)
+
+В строение и юнитов встроены общие структуры и интерфейсы:
+
+```go 
+{
+   physicalModel    *physical_model.PhysicalModel          // физическое представление объекта (именно с этой структурой происходит движение, столкновения, пападания пуль)
+   gunner           *gunner.Gunner                         // интерфейс для использования оружия
+   BurstOfShots     *burst_of_shots.BurstOfShots           // очередь пуль которые вытеют из ствола, у оружия может быть несколько стволов и стрельба очередью
+   weaponTarget     *target.Target                         // цель для атаки
+   visibleObjects   *visible_objects.VisibleObjectsStore   // обьекты которые "видит", в текущей реализации встраиваается экземляр "комманды"
+}
+```
+
+Движение юнитов и строений обрабатывается
+в `GameLoop` [одним методом](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/game_loop_move/game_loop_move.go)
+, [стрельба](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/attack/fire.go#L25)
+и [поворот](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/attack/rotate_gun.go#L19) орудий тоже.
+
+#### Пули
+
+[Пуля](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/bullet/bullet.go) в игре
+представляет из себя шарик
+радиусом [_const.AmmoRadius](https://github.com/TrashPony/game-engine/blob/master/router/const/const.go#L7), физика пули
+работает на
+формулах ["Полета снаряда"](https://en.wikipedia.org/wiki/) ([реализация](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_math/bullet_ballistic.go))
+. В зависимости от типа
+снаряда ([пуля](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/fly_bullets/fly_bullet.go)
+, [лазер](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/fly_bullets/fly_laser.go),
+[ракеты](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/fly_bullets/fly_missile.go)) может немного
+менять поведение.
+
+Пули в `GameLoop`
+обрабатываются [тут](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/game_loop_bullets/game_loop_bullets.go)
 
 <h3 id="binary-protocol">
 Бинарный протокол связи между серверов и клиентом

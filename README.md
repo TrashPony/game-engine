@@ -93,12 +93,6 @@
 
 ### Как запустить:
 
-##### короткий путь:
-
-- короткого пути нет // TODO добавить доцкер
-
-##### длинный путь:
-
 - поднимаем сервер
 
 ```bash
@@ -108,13 +102,20 @@ go run ./node/main.go;
 ```
 
 - запускаем статику
-
 ```bash
 cd .\static\;
 npm run dev;
-```
+#заходим http://localhost:8083/
 
-- заходим http://localhost:8083/
+## ИЛИ
+cd .\static\;
+npm run build;
+#заходим http://localhost:8086/
+```
+настрока сети на стороне клиента находится вот [тут](https://github.com/TrashPony/game-engine/blob/master/static/src/const.js) <br>
+роутер ловит сообщения сокета вот [тут](https://github.com/TrashPony/game-engine/blob/master/router/main.go#L17)
+
+### ----
 
 <h3 id="create-world">
 Конструктор и создание мира

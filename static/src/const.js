@@ -6,8 +6,8 @@ let siteUrl = (window.location !== window.parent.location) ? document.referrer :
 if (NODE_ENV !== 'production') {
   host = 'localhost:8086';
 } else {
-  ws = 'wss';
-  http = 'https';
+  // ws = 'wss';
+  // http = 'https';
 }
 
 // host = 'localhost:8086'; //localhost:8086, veliri.ru
@@ -17,16 +17,7 @@ if (NODE_ENV !== 'production') {
 export const urls = {
   authTokenKey: 'veliri-auth-token',
   socketURL: ws + "://" + host + "/socket",
-  regURL: http + "://" + host + "/api/registration",
   loginURL: http + "://" + host + "/api/login",
-  vkOAuth: http + "://" + host + "/api/vk-oauth",
-  vkOAuthUrl: http + "://" + host + "/api/vk-get-oauth-url",
-  vkAppLogin: http + "://" + host + "/api/vk-app-login",
-  avatarURL: http + "://" + host + "/api/avatar",
-  dialogPicURL: http + "://" + host + "/api/get_picture_dialog",
-  yandexOAuth: http + "://" + host + "/api/yandex-oauth",
-  yandexAppLogin: http + "://" + host + "/api/yandex-app-oauth",
-
   siteUrl: siteUrl,
 };
 

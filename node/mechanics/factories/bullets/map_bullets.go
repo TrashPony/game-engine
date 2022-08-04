@@ -51,35 +51,3 @@ func (s *mapBullets) RemoveBullet(bullet *bullet.Bullet) {
 		s.bullets = s.bullets[:len(s.bullets)-1]
 	}
 }
-
-func (s *mapBullets) GetBullets() <-chan *bullet.Bullet {
-
-	s.mx.RLock()
-	bullets := make(chan *bullet.Bullet, len(s.bullets))
-
-	go func() {
-		defer func() {
-			close(bullets)
-			s.mx.RUnlock()
-		}()
-
-		for _, mpBullet := range s.bullets {
-			bullets <- mpBullet
-		}
-	}()
-
-	return bullets
-}
-
-func (s *mapBullets) GetCountBullets() int {
-
-	s.mx.RLock()
-	defer s.mx.RUnlock()
-
-	return len(s.bullets)
-}
-
-func (s *mapBullets) UnsafeRange() ([]*bullet.Bullet, *sync.RWMutex) {
-	s.mx.RLock()
-	return s.bullets, &s.mx
-}

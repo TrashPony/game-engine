@@ -6,26 +6,16 @@ import (
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/player"
 	uuid "github.com/satori/go.uuid"
 	"sync"
-	"time"
 )
 
 type Battle struct {
 	ID                  int                    `json:"id"`
 	UUID                string                 `json:"uuid"`
-	StartTime           time.Time              `json:"-"`
 	Map                 *_map.Map              `json:"-"`
-	End                 bool                   `json:"end"`
-	Type                string                 `json:"type"`
-	TypeID              int                    `json:"type_id"`
-	SubType             int                    `json:"sub_type"`
-	Bases               []*_map.Spawn          `json:"bases"`
 	Teams               map[int]*Team          `json:"teams"`
 	WaitReady           bool                   `json:"wait_ready"`
 	WaitTimeOut         int                    `json:"wait_time_out"`
-	TimeOut             int                    `json:"time_out"`
 	SessionPlayersState map[int]*SessionPlayer `json:"session_players_state"`
-	OldTickMessages     map[string][]byte      `json:"-"`
-	AllTime             int                    `json:"-"`
 	players             []*player.Player
 	mx                  sync.RWMutex
 }
@@ -87,12 +77,10 @@ func (b *Battle) AddUser(newPlayer *player.Player) {
 	_, ok := b.SessionPlayersState[newPlayer.ID]
 	if !ok {
 		b.SessionPlayersState[newPlayer.ID] = &SessionPlayer{
-			UUID:         uuid.NewV4().String(),
-			PlayerID:     newPlayer.GetID(),
-			Login:        newPlayer.GetLogin(),
-			GameType:     b.Type,
-			Live:         true,
-			CountRespawn: 0,
+			UUID:     uuid.NewV4().String(),
+			PlayerID: newPlayer.GetID(),
+			Login:    newPlayer.GetLogin(),
+			Live:     true,
 		}
 	}
 

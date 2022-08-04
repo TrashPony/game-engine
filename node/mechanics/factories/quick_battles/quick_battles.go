@@ -35,13 +35,6 @@ func (b *battles) GetBattleByUUID(uuid string) *battle.Battle {
 	return b.battles[uuid]
 }
 
-func (b *battles) RemoveBattle(uuid string) {
-	b.mx.Lock()
-	defer b.mx.Unlock()
-
-	delete(b.battles, uuid)
-}
-
 func (b *battles) GetAll(basket []*battle.Battle) []*battle.Battle {
 	b.mx.RLock()
 	defer b.mx.RUnlock()

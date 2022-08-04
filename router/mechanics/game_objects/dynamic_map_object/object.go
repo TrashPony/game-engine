@@ -26,14 +26,10 @@ type Object struct {
 	Texture             string `json:"texture"`
 	AnimateSpriteSheets string `json:"animate_sprite_sheets"`
 	AnimateLoop         bool   `json:"animate_loop"`
-	UnitOverlap         bool   `json:"unit_overlap"`
-	Name                string `json:"name"`
-	Description         string `json:"description"`
 	MaxHP               int    `json:"max_hp"`
 	TypeMaxHP           int    `json:"-"`
 	HP                  int    `json:"hp"`
 	Scale               int    `json:"scale"`
-	MaxScale            int    `json:"-"` // определяется рандомно для растений максимальный размер куста
 	Shadow              bool   `json:"shadow"`
 	AnimationSpeed      int    `json:"animation_speed"`
 	Priority            int    `json:"priority"`
@@ -56,34 +52,27 @@ type Object struct {
 	Weight           int  `json:"weight"`
 	Immortal         bool `json:"-"`
 	Build            bool `json:"build"`
-	MoveDestroyer    bool `json:"-"`
 	DestroyLeftTimer bool `json:"-"`
 	DestroyTimer     int  `json:"-"`
 	Work             bool `json:"work"`
-	LifeTime         int  `json:"-"`
 
 	CacheJson      []byte `json:"-"`
 	CacheGeoData   []byte `json:"-"`
 	CreateJsonTime int64  `json:"-"`
 
-	GrowCycle    int `json:"-"`
-	GrowLeftTime int `json:"-"`
-	GrowTime     int `json:"grow_time"` // говорит время цикла когда растение росло для гладкой отрисовки
+	GrowTime int `json:"grow_time"` // говорит время цикла когда растение росло для гладкой отрисовки
 
 	MemoryID int `json:"-"`
 
 	WeaponID      int `json:"weapon_id"`
-	EquipID       int `json:"equip_id"`
 	XAttach       int `json:"x_attach"`
 	YAttach       int `json:"y_attach"`
 	MaxEnergy     int `json:"max_energy"`
 	CurrentEnergy int `json:"current_energy"`
 	ViewRange     int `json:"view_range"`
 
-	Weapons      map[int]*body.WeaponSlot `json:"weapons"`
-	Run          bool                     `json:"-"`
-	TrapUnits    []int                    `json:"trap_units"`
-	ForceDisable bool                     `json:"force_disable"`
+	Weapons map[int]*body.WeaponSlot `json:"weapons"`
+	Run     bool                     `json:"-"`
 
 	countUpdateWeaponTarget int
 	visibleObjects          *visible_objects.VisibleObjectsStore
@@ -170,33 +159,12 @@ func (o *Object) initPhysicalModel() {
 		AngularDrag: 0.7,
 		Type:        "object",
 		ID:          o.ID,
-		Static:      o.Static,
 		Weight:      weight,
 	}
 }
 
 func (o *Object) UpdatePhysicalModel() {
 	// todo обонление параметров типо изменилась скорость из за скила например
-}
-
-func (o *Object) IsFly() bool {
-	return false
-}
-
-func (o *Object) CheckGrowthPower() bool {
-	return false
-}
-
-func (o *Object) CheckGrowthRevers() bool {
-	return false
-}
-
-func (o *Object) CheckLeftRotate() bool {
-	return false
-}
-
-func (o *Object) CheckRightRotate() bool {
-	return false
 }
 
 func (o *Object) GetBytes(mapTime int64) []byte {
@@ -290,10 +258,6 @@ type Flore struct {
 	Y                int    `json:"y"`
 }
 
-func (o *Object) GetGrowTime() int {
-	return o.GrowTime
-}
-
 func (o *Object) GetTurretAmmo() {
 	for _, w := range o.RangeWeaponSlots() {
 		if w != nil && w.Weapon != nil && w.Ammo == nil {
@@ -318,11 +282,6 @@ func (o *Object) checkVisibleObjectStore() {
 	if o.visibleObjects == nil {
 		o.visibleObjects = &visible_objects.VisibleObjectsStore{}
 	}
-}
-
-func (o *Object) GetVisibleObjects() <-chan *visible_objects.VisibleObject {
-	o.checkVisibleObjectStore()
-	return o.visibleObjects.GetVisibleObjects()
 }
 
 func (o *Object) UnsafeRangeVisibleObjects() ([]*visible_objects.VisibleObject, *sync.RWMutex) {

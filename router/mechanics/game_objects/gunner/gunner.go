@@ -22,16 +22,11 @@ type GunUser interface {
 	SetWeaponTarget(target *target.Target)
 	GetBurstOfShots() *burst_of_shots.BurstOfShots
 	GetTeamID() int
-	GetVisibleObjects() <-chan *visible_objects.VisibleObject
 	UnsafeRangeVisibleObjects() ([]*visible_objects.VisibleObject, *sync.RWMutex)
 }
 
 type Gunner struct {
 	GunUser GunUser
-}
-
-func (g *Gunner) GetVisibleObjects() <-chan *visible_objects.VisibleObject {
-	return g.GunUser.GetVisibleObjects()
 }
 
 func (g *Gunner) UnsafeRangeVisibleObjects() ([]*visible_objects.VisibleObject, *sync.RWMutex) {
@@ -237,24 +232,6 @@ func (g *Gunner) GetMinDamage(slotNumber int) int {
 	}
 
 	return int(float64(weaponSlot.Ammo.MinDamage) * weaponSlot.Weapon.DamageModifier)
-}
-
-func (g *Gunner) GetCountFireBullet(slotNumber int) int {
-	weaponSlot := g.GunUser.GetWeaponSlot(slotNumber)
-	if weaponSlot == nil || weaponSlot.Weapon == nil || weaponSlot.Ammo == nil {
-		return 0
-	}
-
-	return weaponSlot.Weapon.CountFireBullet
-}
-
-func (g *Gunner) GetBulletSpeed(slotNumber int) float64 {
-	weaponSlot := g.GunUser.GetWeaponSlot(slotNumber)
-	if weaponSlot == nil || weaponSlot.Weapon == nil || weaponSlot.Ammo == nil {
-		return 0
-	}
-
-	return float64(weaponSlot.Ammo.BulletSpeed + weaponSlot.Weapon.BulletSpeed)
 }
 
 func (g *Gunner) GetWeaponReloadTime(slotNumber int) int {

@@ -38,12 +38,6 @@ func (c *store) UnitsInInit(mapID int) {
 	c.units[mapID] = &unitsInMap{units: make([]*unit.Unit, 0)}
 }
 
-func (c *store) StoreRemove(mapID int) {
-	c.mx.Lock()
-	defer c.mx.Unlock()
-	delete(c.units, mapID)
-}
-
 func (c *store) GetAllUnitsArray(mapID int, basket []*unit.Unit) []*unit.Unit {
 	units := c.getUnitsInMap(mapID)
 
@@ -61,11 +55,6 @@ func (c *store) GetAllUnitsArray(mapID int, basket []*unit.Unit) []*unit.Unit {
 func (c *store) AddUnit(unit *unit.Unit) {
 	unitsInMap := c.getUnitsInMap(unit.MapID)
 	unitsInMap.addUnit(unit)
-}
-
-func (c *store) GetAllUnitsByMapIDChan(mapID int) <-chan *unit.Unit {
-	units := c.getUnitsInMap(mapID)
-	return units.getAllUnitsChan()
 }
 
 func (c *store) GetAllUnitsByMapIDUnsafeRange(mapID int) ([]*unit.Unit, *sync.RWMutex) {

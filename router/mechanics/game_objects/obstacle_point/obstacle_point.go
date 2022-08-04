@@ -1,8 +1,6 @@
 package obstacle_point
 
 import (
-	"encoding/json"
-	"sync"
 	"sync/atomic"
 )
 
@@ -10,13 +8,11 @@ type ObstaclePoint struct {
 	X          int32   `json:"x"`
 	Y          int32   `json:"y"`
 	Radius     int32   `json:"radius"`
-	Move       bool    `json:"move"`     // если тру то это только для пуль
-	Resource   bool    `json:"resource"` // не влияет на колизии с миром, но влияет на то что низя строить, или куда навести мыш
+	Move       bool    `json:"move"` // если тру то это только для пуль
 	ParentID   int32   `json:"-"`
 	ParentType string  `json:"-"`
 	Key        string  `json:"-"`
 	Height     float64 `json:"height"`
-	mx         sync.RWMutex
 }
 
 func (o *ObstaclePoint) GetX() int {
@@ -45,18 +41,6 @@ func (o *ObstaclePoint) SetRadius(radius int) {
 
 func (o *ObstaclePoint) GetMove() bool {
 	return o.Move
-}
-
-func (o *ObstaclePoint) SetMove(move bool) {
-	o.Move = move
-}
-
-func (o *ObstaclePoint) GetResource() bool {
-	return o.Resource
-}
-
-func (o *ObstaclePoint) SetResource(resource bool) {
-	o.Resource = resource
 }
 
 func (o *ObstaclePoint) GetParentID() int {
@@ -90,27 +74,4 @@ func (o *ObstaclePoint) GetHeight() float64 {
 
 func (o *ObstaclePoint) SetHeight(height float64) {
 	o.Height = height
-}
-
-func (o *ObstaclePoint) GetJSON() string {
-	jsonPoint, err := json.Marshal(struct {
-		X        int32   `json:"x"`
-		Y        int32   `json:"y"`
-		Radius   int32   `json:"radius"`
-		Move     bool    `json:"move"`
-		Resource bool    `json:"resource"`
-		Height   float64 `json:"height"`
-	}{
-		X:        o.X,
-		Y:        o.Y,
-		Radius:   o.Radius,
-		Move:     o.Move,
-		Resource: o.Resource,
-		Height:   o.Height,
-	})
-	if err != nil {
-		println("geo point to json: ", err.Error())
-	}
-
-	return string(jsonPoint)
 }

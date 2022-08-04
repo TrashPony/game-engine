@@ -10,24 +10,6 @@ type unitsInMap struct {
 	mx    sync.RWMutex
 }
 
-func (units *unitsInMap) getAllUnitsChan() <-chan *unit.Unit {
-	units.mx.RLock()
-	unitChan := make(chan *unit.Unit, len(units.units))
-
-	go func() {
-		defer func() {
-			close(unitChan)
-			units.mx.RUnlock()
-		}()
-
-		for _, gameUnit := range units.units {
-			unitChan <- gameUnit
-		}
-	}()
-
-	return unitChan
-}
-
 func (units *unitsInMap) unsafeRange() ([]*unit.Unit, *sync.RWMutex) {
 	units.mx.RLock()
 	return units.units, &units.mx

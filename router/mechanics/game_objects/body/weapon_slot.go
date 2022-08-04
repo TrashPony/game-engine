@@ -1,7 +1,6 @@
 package body
 
 import (
-	"encoding/json"
 	"github.com/TrashPony/game-engine/router/mechanics/game_math"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/ammo"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/weapon"
@@ -42,12 +41,6 @@ func (s *WeaponSlot) StartReload(reloadTime int, ammoReload bool) {
 	s.StartReloadTime = time.Now().UnixNano() / int64(time.Millisecond)
 	s.EndReloadTime = s.StartReloadTime + int64(reloadTime)
 }
-
-//func (s *WeaponSlot) StartAmmoReload() {
-//	s.SetReload(true)
-//	s.setTimeReload(s.Weapon.ReloadAmmoTime)
-//	s.SetCurrentReload(s.Weapon.ReloadAmmoTime)
-//}
 
 func (s *WeaponSlot) GetReload() bool {
 	return s.Reload
@@ -94,10 +87,6 @@ func (s *WeaponSlot) SetGunRotate(rotate float64) {
 	s.GunRotate = rotate
 }
 
-func (s *WeaponSlot) getTimeReload() int {
-	return s.TimeReload
-}
-
 func (s *WeaponSlot) setTimeReload(time int) {
 	s.TimeReload = time
 }
@@ -127,20 +116,6 @@ func (s *WeaponSlot) GetRealXAttach() int {
 
 func (s *WeaponSlot) GetRealYAttach() int {
 	return s.RealYAttach
-}
-
-func (s *WeaponSlot) GetJSON() string {
-	jsonSlot, err := json.Marshal(s)
-	if err != nil {
-		println("weapon Slot to json: ", err.Error())
-	}
-
-	return string(jsonSlot)
-}
-
-func (s *WeaponSlot) GetCopy() *WeaponSlot {
-	copySlot := *s
-	return &copySlot
 }
 
 func (s *WeaponSlot) NextLastFirePosition() {

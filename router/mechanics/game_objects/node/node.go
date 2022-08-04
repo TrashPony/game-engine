@@ -7,7 +7,6 @@ import (
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/player"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/rpc_request"
 	"github.com/valyala/gorpc"
-	"sync"
 	"time"
 )
 
@@ -16,7 +15,6 @@ type Node struct {
 	Url         string `json:"url"`
 	MaxSessions int    `json:"max_sessions"`
 	Error       bool   `json:"error"`
-	mx          sync.Mutex
 	rpcClient   *gorpc.Client
 }
 

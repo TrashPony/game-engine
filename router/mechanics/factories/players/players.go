@@ -1,7 +1,6 @@
 package players
 
 import (
-	_const "github.com/TrashPony/game-engine/router/const"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/player"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/user"
 	uuid "github.com/satori/go.uuid"
@@ -41,9 +40,8 @@ func (usersStore *usersStore) getUser(id int) *user.User {
 	val, ok := usersStore.users[id]
 	if !ok {
 		val = &user.User{
-			ID:       id,
-			Login:    uuid.NewV4().String(),
-			UserRole: _const.AdminUserRole,
+			ID:    id,
+			Login: uuid.NewV4().String(),
 		}
 
 		usersStore.users[id] = val

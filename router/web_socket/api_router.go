@@ -11,10 +11,7 @@ import (
 type Request struct {
 	Event       string `json:"event,omitempty"`
 	Service     string `json:"service,omitempty"`
-	UserName    string `json:"user_name,omitempty"`
 	ID          int    `json:"id,omitempty"`
-	Type        string `json:"type,omitempty"`
-	UUID        string `json:"uuid,omitempty"`
 	X           int    `json:"x"`
 	Y           int    `json:"y"`
 	SelectUnits []int  `json:"select_units,omitempty"`
@@ -26,26 +23,6 @@ type Request struct {
 	Sp          bool   `json:"sp"`
 	St          bool   `json:"st"`
 	Fire        bool   `json:"fire"`
-	TypeSlot    int    `json:"type_slot"`
-	Slot        int    `json:"slot"`
-	SrcSlot     int    `json:"src_slot"`
-	DstSlot     int    `json:"dst_slot"`
-	Source      string `json:"source"`
-	Destination string `json:"destination"`
-	Resolution  string `json:"resolution"`
-	Name        string `json:"name"`
-	Left        int    `json:"left"`
-	Top         int    `json:"top"`
-	Height      int    `json:"height"`
-	Width       int    `json:"width"`
-	Open        bool   `json:"open"`
-	Ready       bool   `json:"ready"`
-	Price       int    `json:"price"`
-	Count       int    `json:"count"`
-	Data        string `json:"data"`
-	Date        string `json:"date"`
-	ToDate      string `json:"to_date"`
-	ToPage      int    `json:"to_page"`
 }
 
 func Reader(ws *websocket.Conn, gameUser *user.User) {

@@ -23,7 +23,6 @@ var weaponTypes = map[int]*weapon.Weapon{
 		ReloadTime:         64,
 		DelayFollowingFire: 32,
 		DefaultAmmoTypeID:  1,
-		Unit:               true,
 		FirePositions: []*coordinate.Coordinate{
 			{
 				X: 63,
@@ -74,10 +73,7 @@ func GetNewWeapon(id int) *weapon.Weapon {
 		newWeapon.FirePositions = append(newWeapon.FirePositions, c)
 	}
 
-	if newWeapon.Unit {
-		newWeapon.WeaponTexture = newWeapon.Name
-	}
-
+	newWeapon.WeaponTexture = newWeapon.Name
 	return &newWeapon
 }
 

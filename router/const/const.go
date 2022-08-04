@@ -10,8 +10,6 @@ const (
 	ServerBulletTick  = 32
 	ServerTickSecPart = float64(1000) / ServerTick
 
-	AdminUserRole = "admin"
-
 	// SpriteSize размеры спрайтов юнитов и обьектов, что бы правильно расчитывать расположение оружия и снаряжения на теле/корпусе
 	SpriteSize  = 128.00
 	SpriteSize2 = SpriteSize / 2

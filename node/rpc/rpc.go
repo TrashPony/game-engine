@@ -167,7 +167,6 @@ func SendData(data *web_socket_response.Response) {
 		return
 	}
 
-	data.NodeName = nodeName
 	req := rpc_request.Request{Event: "SendData", Response: *data}
 	_, err := r.VeliriMainClient.Call(req)
 	if err != nil {

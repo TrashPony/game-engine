@@ -7,7 +7,6 @@ import (
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/unit"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/web_socket_response"
 	"github.com/TrashPony/game-engine/router/web_socket"
-	"time"
 )
 
 func Unit(units []*unit.Unit, battle *battle.Battle, ms *web_socket.MessagesStore) {
@@ -41,7 +40,6 @@ func Unit(units []*unit.Unit, battle *battle.Battle, ms *web_socket.MessagesStor
 
 			fireWeapons := attack.Fire(gunnerUnit.GetGunner(), weaponSlot, "unit", gunnerUnit.GetID(), battle, units)
 			if len(fireWeapons) > 0 {
-				gunnerUnit.LastFireTime = time.Now().UnixNano()
 				for _, m := range fireWeapons {
 					ms.AddMsg("fireMsgs", "bin", web_socket_response.Response{
 						BinaryMsg: binary_msg.CreateFireGunBinaryMsg(m.TypeID, m.X, m.Y, m.Z, m.Rotate, m.AccumulationPercent),

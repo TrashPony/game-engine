@@ -15,16 +15,6 @@ func FollowAttackTarget(b *battle2.Battle, aiUnit *unit.Unit) bool {
 		return false
 	}
 
-	globalMeta := aiUnit.BehaviorRules.Meta
-	if globalMeta != nil && globalMeta.Patrol != nil && len(globalMeta.Patrol.Path) > 0 {
-		currentPatrolTarget := globalMeta.Patrol.Path[globalMeta.Patrol.ToIDIndex]
-
-		dist := int(game_math.GetBetweenDist(weaponTarget.GetX(), weaponTarget.GetY(), currentPatrolTarget.X, currentPatrolTarget.Y))
-		if dist > currentPatrolTarget.Radius*3 {
-			return false
-		}
-	}
-
 	if actual_target.GetXYZTarget(aiUnit.GetGunner(), weaponTarget, b.Map, aiUnit.GetWeaponSlot(1)) {
 
 		weaponDist, _ := aiUnit.GetGunner().GetWeaponMaxRange(weaponTarget.Z, 1, false) // todo хардкод слота

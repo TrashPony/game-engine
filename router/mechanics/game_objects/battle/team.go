@@ -3,21 +3,16 @@ package battle
 import (
 	"github.com/TrashPony/game-engine/router/generate_ids"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/dynamic_map_object"
-	_map "github.com/TrashPony/game-engine/router/mechanics/game_objects/map"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/visible_objects"
 	"sync"
 )
 
 type Team struct {
-	ID                     int         `json:"id"`
-	Hide                   bool        `json:"hide"`
-	Spawn                  *_map.Spawn `json:"-"`
-	Winner                 bool        `json:"winner"`
-	PlayersIDs             []int       `json:"players_ids"`
-	Points                 int         `json:"points"`
-	TickPoint              int         `json:"tick_point"`
-	AI                     bool        `json:"ai"`
-	unions                 []int       `json:"unions"`
+	ID                     int   `json:"id"`
+	Hide                   bool  `json:"hide"`
+	PlayersIDs             []int `json:"players_ids"`
+	AI                     bool  `json:"ai"`
+	unions                 []int
 	memoryDynamicObjects   *visible_objects.VisibleObjectsStore
 	visibleObjects         *visible_objects.VisibleObjectsStore
 	countUpdateViewObjects int

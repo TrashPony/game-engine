@@ -1,7 +1,6 @@
 package game_loop_move
 
 import (
-	"github.com/TrashPony/game-engine/node/binary_msg"
 	collisions2 "github.com/TrashPony/game-engine/node/mechanics/collisions"
 	units2 "github.com/TrashPony/game-engine/node/mechanics/factories/units"
 	"github.com/TrashPony/game-engine/router/mechanics/game_math"
@@ -9,7 +8,6 @@ import (
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/dynamic_map_object"
 	_map "github.com/TrashPony/game-engine/router/mechanics/game_objects/map"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/unit"
-	"github.com/TrashPony/game-engine/router/mechanics/game_objects/web_socket_response"
 	"github.com/TrashPony/game-engine/router/web_socket"
 	"math"
 )
@@ -45,15 +43,6 @@ func checkMoveCollision(typeObj string, id int, moveObject moveObject, x, y, rot
 
 	fakeObj, obj := collisionToObject(typeObj, id, moveObject, x, y, rotate, b.Map)
 	if obj != nil {
-
-		if obj.MoveDestroyer {
-			b.Map.RemoveDynamicObject(obj)
-			ms.AddMsg("objectDeadMsgs", "bin", web_socket_response.Response{
-				X:         obj.GetX(),
-				Y:         obj.GetY(),
-				BinaryMsg: binary_msg.ObjectDeadBinaryMsg(obj.ID, obj.GetX(), obj.GetY(), "object"),
-			}, nil)
-		}
 
 		if typeObj == "unit" {
 			gameUnit := units2.Units.GetUnitByIDAndMapID(id, b.Map.Id)
@@ -165,7 +154,6 @@ func collisionToObject(typeObj string, id int, moveObject moveObject, x, y, rota
 				fakeObj.GetPhysicalModel().SetPos(float64(obstaclePoint.X), float64(obstaclePoint.Y), 0)
 				if obj != nil {
 					fakeObj.Weight = obj.Weight
-					fakeObj.MoveDestroyer = obj.MoveDestroyer
 				}
 
 				return &fakeObj, obj

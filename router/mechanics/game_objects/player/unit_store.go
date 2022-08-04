@@ -75,19 +75,6 @@ func (u *userUnitStore) RangeUnits() <-chan *unit.Unit {
 	return units
 }
 
-func (u *userUnitStore) CheckLive() bool {
-	u.mx.RLock()
-	defer u.mx.RUnlock()
-
-	for _, unit := range u.units {
-		if unit.HP > 0 {
-			return true
-		}
-	}
-
-	return false
-}
-
 func (u *userUnitStore) UnsafeRangeUnits() ([]*unit.Unit, *sync.RWMutex) {
 	u.mx.RLock()
 	return u.units, &u.mx

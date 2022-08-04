@@ -5,7 +5,6 @@ import (
 	battle2 "github.com/TrashPony/game-engine/router/mechanics/game_objects/battle"
 	_map "github.com/TrashPony/game-engine/router/mechanics/game_objects/map"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/player"
-	"time"
 )
 
 type Object struct {
@@ -99,11 +98,6 @@ func damage(b *battle2.Battle, typeTarget string, idTarget, damage, pushPower in
 		if damageDealer != nil && ownerUser != nil && damageDealer.TeamID == ownerUser.TeamID && damageDealer.GetID() != ownerUser.GetID() {
 			return false, damageUnit, damageUnit.GetX(), damageUnit.GetY(), 0
 		}
-
-		if damageDealer != nil {
-			damageUnit.SetLastDamage(damageDealer.GetID())
-		}
-		damageUnit.LastDamageTime = time.Now().UnixNano()
 
 		if damageUnit.HP > 0 {
 			damage = damageUnit.SetDamage(damage)

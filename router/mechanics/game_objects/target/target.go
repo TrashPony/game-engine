@@ -1,9 +1,5 @@
 package target
 
-import (
-	"sync"
-)
-
 type Target struct {
 	Type   string  `json:"type"` // box, unit, map
 	UUID   string  `json:"uuid"`
@@ -15,8 +11,6 @@ type Target struct {
 	Attack bool    `json:"attack"`
 	Force  bool    `json:"force"`
 	Radius int     `json:"radius"` // радиус на котором держатся от цели
-	Rotate float64 `json:"rotate"`
-	mx     sync.RWMutex
 }
 
 func (t *Target) GetX() int {
@@ -53,6 +47,5 @@ func (t *Target) SetFollow(follow bool) {
 
 func (t *Target) GetCopy() *Target {
 	copyTarget := *t
-	copyTarget.mx = sync.RWMutex{}
 	return &copyTarget
 }

@@ -16,17 +16,6 @@ func (v *VisibleObjectsStore) AddDynamicObject(object *VisibleObject) {
 	v.visibleObjects = append(v.visibleObjects, object)
 }
 
-func (v *VisibleObjectsStore) AddDynamicMemoryObject(object *VisibleObject) {
-	v.mx.Lock()
-	defer v.mx.Unlock()
-
-	if v.visibleObjects == nil {
-		v.visibleObjects = make([]*VisibleObject, 0)
-	}
-
-	v.visibleObjects = append(v.visibleObjects, object)
-}
-
 func (v *VisibleObjectsStore) RemoveDynamicObject(id int) {
 	v.mx.Lock()
 	defer v.mx.Unlock()
@@ -44,23 +33,6 @@ func (v *VisibleObjectsStore) RemoveDynamicObject(id int) {
 		v.visibleObjects = v.visibleObjects[:len(v.visibleObjects)-1]
 	}
 }
-
-//func (v *VisibleObjectsStore) GetMapDynamicObjectByID(mapID, id int) *VisibleObject {
-//	v.mx.RLock()
-//	defer v.mx.RUnlock()
-//
-//	if v.visibleObjects == nil {
-//		return nil
-//	}
-//
-//	for _, vObj := range v.visibleObjects {
-//		if vObj.MapID == mapID && vObj.TypeObject == "object" && vObj.IDObject == id {
-//			return vObj
-//		}
-//	}
-//
-//	return nil
-//}
 
 func (v *VisibleObjectsStore) GetMapDynamicObjectByID(id int) *VisibleObject {
 

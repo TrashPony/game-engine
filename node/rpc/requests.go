@@ -76,7 +76,7 @@ func i(p *player.Player, req *rpc_request.Request) {
 
 type MapPosition struct {
 	X   int       `json:"x"`
-	Y   int       `json:Y`
+	Y   int       `json:"Y"`
 	Map *_map.Map `json:"map"`
 }
 
@@ -92,7 +92,7 @@ func initBattle(b *battle.Battle, p *player.Player) web_socket_response.Response
 	command := []byte{100}
 	for u := range p.GetGameUnitsStore().RangeUnits() {
 		if u.MapID == b.Map.Id {
-			stateMsg := binary_msg2.StatusSquadBinaryMsg(u.HP, u.Body.CurrentPower)
+			stateMsg := binary_msg2.StatusSquadBinaryMsg(u.HP, 0)
 			command = append(command, binary_msg2.GetIntBytes(len(stateMsg))...)
 			command = append(command, stateMsg...)
 		}

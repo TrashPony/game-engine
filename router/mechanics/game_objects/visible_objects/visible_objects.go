@@ -69,7 +69,6 @@ func (v *VisibleObjectsStore) AddVisibleObject(newObj *VisibleObject) {
 		v.visibleObjects = make([]*VisibleObject, 0)
 	}
 
-	// TODO := newObj.TypeObject+strconv.Itoa(newObj.IDObject)
 	v.visibleObjects = append(v.visibleObjects, newObj)
 }
 
@@ -92,19 +91,16 @@ func (v *VisibleObjectsStore) RemoveVisibleObject(removeObj *VisibleObject) {
 }
 
 type VisibleObject struct {
-	ID         int    `json:"id_mark"`
-	IDObject   int    `json:"id"`
-	TypeObject string `json:"to"`
-	TeamID     int    `json:"teamID"`
-	UUIDObject string `json:"uo"`
-	//UUID       string `json:"-"`
-	View   bool   `json:"-"`    // в прямой видимости
-	Radar  bool   `json:"-"`    // видим только радаром
-	Type   string `json:"type"` // fly(летающий), ground(наземный), structure(структура), resource(ресурс)
-	update bool
-
+	ID            int    `json:"id_mark"`
+	IDObject      int    `json:"id"`
+	TypeObject    string `json:"to"`
+	TeamID        int    `json:"teamID"`
+	UUIDObject    string `json:"uo"`
+	View          bool   `json:"-"`    // в прямой видимости
+	Radar         bool   `json:"-"`    // видим только радаром
+	Type          string `json:"type"` // fly(летающий), ground(наземный), structure(структура), resource(ресурс)
+	update        bool
 	HP            int         `json:"-"`
-	Complete      float64     `json:"-"`
 	Scale         int         `json:"-"`
 	Energy        int         `json:"-"`
 	MapID         int         `json:"mid"`
@@ -117,14 +113,11 @@ type VisibleObject struct {
 	Work          bool        `json:"-"`
 
 	UpdateMsg *UpdateObjMap `json:"-"`
-
-	mx sync.RWMutex
 }
 
 type UpdateObjMap struct {
 	UpdateData []byte
 	Update     bool
-	JSON       string
 	ServerTime int64
 	Mx         sync.Mutex
 }

@@ -40,44 +40,12 @@ func (s *store) AddBullet(bullet *bullet.Bullet) {
 	mapStore.AddBullet(bullet)
 }
 
-func (s *store) StoreRemove(mapID int) {
-	s.mx.Lock()
-	defer s.mx.Unlock()
-	delete(s.bullets, mapID)
-}
-
 func (s *store) RemoveBullet(bullet *bullet.Bullet) {
 	s.mx.RLock()
 	defer s.mx.RUnlock()
 
 	if s.bullets[bullet.MapID] != nil {
 		s.bullets[bullet.MapID].RemoveBullet(bullet)
-	}
-}
-
-func (s *store) GetCount() int {
-	s.mx.RLock()
-	defer s.mx.RUnlock()
-	count := 0
-
-	for _, bullets := range s.bullets {
-		count += bullets.GetCountBullets()
-	}
-
-	return count
-}
-
-func (s *store) GetBulletsByMapID(mapID int) <-chan *bullet.Bullet {
-
-	s.mx.RLock()
-	defer s.mx.RUnlock()
-
-	if s.bullets[mapID] != nil {
-		return s.bullets[mapID].GetBullets()
-	} else {
-		bullets := make(chan *bullet.Bullet, 0)
-		close(bullets)
-		return bullets
 	}
 }
 
@@ -90,15 +58,4 @@ func (s *store) GetCopyArrayBullets(mapID int, basket []*bullet.Bullet) []*bulle
 	}
 
 	return nil
-}
-
-func (s *store) UnsafeRangeByMapID(mapID int) ([]*bullet.Bullet, *sync.RWMutex) {
-	s.mx.RLock()
-	defer s.mx.RUnlock()
-
-	if s.bullets[mapID] == nil {
-		return nil, nil
-	} else {
-		return s.bullets[mapID].UnsafeRange()
-	}
 }

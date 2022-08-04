@@ -2,7 +2,6 @@ package unit
 
 import (
 	"github.com/TrashPony/game-engine/node/binary_msg"
-	_const "github.com/TrashPony/game-engine/router/const"
 	"github.com/TrashPony/game-engine/router/mechanics/game_math"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/behavior_rule"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/body"
@@ -13,35 +12,26 @@ import (
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/target"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/visible_objects"
 	"sync"
-	"time"
 )
 
 type Unit struct {
-	ID              int        `json:"id"`
-	OwnerID         int        `json:"owner_id"`
-	MapID           int        `json:"map_id"`
-	HP              int        `json:"hp"`
-	Body            *body.Body `json:"body"`
-	TeamID          int        `json:"team_id"`
-	RespawnTime     int        `json:"-"`
-	Respawn         bool       `json:"-"`
-	movePath        *MovePath  // специальный обьект для пути
-	moveMx          sync.Mutex
-	findPathTimeOut int
-	BehaviorRules   *behavior_rule.BehaviorRules `json:"-"`
-	Role            string                       `json:"-"`
-	physicalModel   *physical_model.PhysicalModel
-	gunner          *gunner.Gunner
-	BurstOfShots    *burst_of_shots.BurstOfShots `json:"-"`
-	weaponTarget    *target.Target
-	OldStateMsg     map[string][]byte `json:"-"` // TODO небольшой костыль что бы не обновлять постоянно стейт на фронте
-	LastDamage      LastDamage        `json:"-"` // последний урон конкретно от другово игрока
-	LastDamageTime  int64             `json:"-"` // время последнего урона неважно от кого
-	LastFireTime    int64             `json:"-"` // время последнего выстрела, включая активные модули
-	CacheJson       []byte            `json:"-"`
-	CreateJsonTime  int64             `json:"-"`
-	visibleObjects  *visible_objects.VisibleObjectsStore
-	mx              sync.RWMutex
+	ID             int        `json:"id"`
+	OwnerID        int        `json:"owner_id"`
+	MapID          int        `json:"map_id"`
+	HP             int        `json:"hp"`
+	Body           *body.Body `json:"body"`
+	TeamID         int        `json:"team_id"`
+	movePath       *MovePath  // специальный обьект для пути
+	moveMx         sync.Mutex
+	BehaviorRules  *behavior_rule.BehaviorRules `json:"-"`
+	physicalModel  *physical_model.PhysicalModel
+	gunner         *gunner.Gunner
+	BurstOfShots   *burst_of_shots.BurstOfShots `json:"-"`
+	weaponTarget   *target.Target
+	CacheJson      []byte `json:"-"`
+	CreateJsonTime int64  `json:"-"`
+	visibleObjects *visible_objects.VisibleObjectsStore
+	mx             sync.RWMutex
 }
 
 func (u *Unit) GetUpdateData(mapTime int64) []byte {
@@ -58,29 +48,6 @@ func (u *Unit) GetTeamID() int {
 	return u.TeamID
 }
 
-type LastDamage struct {
-	UserID     int   `json:"user_id"`
-	TimeDamage int64 `json:"time_damage"`
-}
-
-func (u *Unit) SetLastDamage(userId int) {
-	if userId == u.OwnerID {
-		return
-	}
-
-	u.LastDamage.UserID = userId
-	u.LastDamage.TimeDamage = time.Now().UnixNano()
-}
-
-func (u *Unit) GetLastDamage() int {
-	// если урон наносился больше чем 30 сек назад то он не учитывается
-	if time.Now().UnixNano()-u.LastDamage.TimeDamage > int64(time.Second*30) {
-		return 0
-	}
-
-	return u.LastDamage.UserID
-}
-
 func (u *Unit) GetOwnerID() int {
 	return u.OwnerID
 }
@@ -91,45 +58,6 @@ func (u *Unit) GetWeight() float64 {
 
 func (u *Unit) AddVelocity(x float64, y float64) {
 	u.GetPhysicalModel().AddVelocity(x, y)
-}
-
-func (u *Unit) UpdatePhysicalModel() {
-
-	if u.physicalModel == nil {
-		u.initPhysicalModel() // инициируем по умолчания, и ток в методе UpdatePhysicalModel уже докидываем скилы и тд
-	}
-
-	u.physicalModel.ID = u.ID
-	u.physicalModel.Speed = u.GetMoveMaxPower() / _const.ServerTickSecPart
-	u.physicalModel.ReverseSpeed = u.GetMaxReverse() / _const.ServerTickSecPart
-	u.physicalModel.PowerFactor = u.GetPowerFactor() / _const.ServerTickSecPart
-	u.physicalModel.ReverseFactor = u.GetReverseFactor() / _const.ServerTickSecPart
-	u.physicalModel.TurnSpeed = u.GetTurnSpeed() / _const.ServerTickSecPart
-}
-
-func (u *Unit) initPhysicalModel() {
-	// todo тестовые параметры
-	u.physicalModel = &physical_model.PhysicalModel{
-		Speed:         u.GetMoveMaxPower() / _const.ServerTickSecPart,
-		ReverseSpeed:  u.GetMaxReverse() / _const.ServerTickSecPart,
-		PowerFactor:   u.GetPowerFactor() / _const.ServerTickSecPart,
-		ReverseFactor: u.GetReverseFactor() / _const.ServerTickSecPart,
-		TurnSpeed:     u.GetTurnSpeed() / _const.ServerTickSecPart,
-		WASD:          physical_model.WASD{},
-		MoveDrag:      u.Body.MoveDrag,
-		AngularDrag:   u.Body.AngularDrag,
-		Weight:        u.Body.Weight,
-		ChassisType:   u.Body.ChassisType,
-	}
-
-	// применяем настройки размера к обьектам колизий
-	sizeOffset := float64(u.Body.Scale) / 100
-	u.physicalModel.Height = float64(u.Body.Height) * sizeOffset
-	u.physicalModel.Length = float64(u.Body.Length) * sizeOffset
-	u.physicalModel.Width = float64(u.Body.Width) * sizeOffset
-	u.physicalModel.Radius = int(float64(u.Body.Radius) * sizeOffset)
-	u.HP = u.Body.MaxHP
-	u.Body.CurrentPower = u.Body.MaxPower
 }
 
 // ячейки которые отображены на панеле быстрого доступа игрока
@@ -150,14 +78,6 @@ type EquipSell struct {
 
 func (u *Unit) GetType() string {
 	return "unit"
-}
-
-func (u *Unit) GetPower() int {
-	return u.Body.CurrentPower
-}
-
-func (u *Unit) SetPower(power int) {
-	u.Body.CurrentPower = power
 }
 
 func (u *Unit) GetMapID() int {
@@ -201,19 +121,6 @@ func (u *Unit) GetGunner() *gunner.Gunner {
 	}
 
 	return u.gunner
-}
-
-func (u *Unit) GetPhysicalModel() *physical_model.PhysicalModel {
-	if u.physicalModel == nil {
-		u.initPhysicalModel()
-	}
-
-	return u.physicalModel
-}
-
-func (u *Unit) GetCopyPhysicalModel() *physical_model.PhysicalModel {
-	pm := *u.physicalModel
-	return &pm
 }
 
 func (u *Unit) GetBytes(mapTime int64) []byte {
@@ -316,10 +223,6 @@ func (u *Unit) GetMaxHP() int {
 	return u.Body.MaxHP
 }
 
-func (u *Unit) GetMaxPower() int {
-	return u.Body.MaxPower
-}
-
 func (u *Unit) GetMoveMaxPower() float64 {
 	return u.Body.Speed
 }
@@ -347,86 +250,6 @@ func (u *Unit) GetRangeRadar() int {
 	return u.Body.RangeRadar
 }
 
-func (u *Unit) FindPathTimeOut() bool {
-	u.findPathTimeOut -= _const.ServerTick
-	if u.findPathTimeOut < 0 {
-		u.findPathTimeOut = 1000
-		return false
-	}
-
-	return true
-}
-
-func (u *Unit) GetMovePathState() (*target.Target, *[]*coordinate.Coordinate, int, bool) {
-	u.moveMx.Lock()
-	defer u.moveMx.Unlock()
-
-	if u.movePath == nil {
-		return nil, nil, 0, false
-	}
-
-	return u.movePath.followTarget, u.movePath.path, u.movePath.currentPoint, u.movePath.needFindPath
-}
-
-func (u *Unit) NextMovePoint() {
-	u.moveMx.Lock()
-	defer u.moveMx.Unlock()
-
-	if u.movePath == nil {
-		return
-	}
-
-	u.movePath.currentPoint++
-}
-
-func (u *Unit) SetFindMovePath() {
-	u.moveMx.Lock()
-	defer u.moveMx.Unlock()
-
-	if u.movePath != nil {
-		u.movePath.needFindPath = true
-	}
-}
-
-func (u *Unit) RemoveMovePath() {
-	u.moveMx.Lock()
-	defer u.moveMx.Unlock()
-
-	u.movePath = nil
-}
-
-func (u *Unit) SetMovePath(path *[]*coordinate.Coordinate) {
-	u.moveMx.Lock()
-	defer u.moveMx.Unlock()
-
-	if u.movePath == nil {
-		return
-	}
-
-	u.movePath.needFindPath = false
-	u.movePath.path = path
-	u.movePath.currentPoint = 0
-}
-
-func (u *Unit) SetMovePathTarget(t *target.Target) {
-	u.moveMx.Lock()
-	defer u.moveMx.Unlock()
-
-	u.movePath = &MovePath{
-		needFindPath: true,
-		path:         &[]*coordinate.Coordinate{{X: t.X, Y: t.Y}},
-		followTarget: t,
-	}
-}
-
-func (u *Unit) GetFollowTarget() *target.Target {
-	if u.movePath != nil {
-		return u.movePath.followTarget
-	}
-
-	return nil
-}
-
 func (u *Unit) SetVisibleObjectStore(v *visible_objects.VisibleObjectsStore) {
 	u.visibleObjects = v
 }
@@ -435,11 +258,6 @@ func (u *Unit) checkVisibleObjectStore() {
 	if u.visibleObjects == nil {
 		u.visibleObjects = &visible_objects.VisibleObjectsStore{}
 	}
-}
-
-func (u *Unit) GetVisibleObjects() <-chan *visible_objects.VisibleObject {
-	u.checkVisibleObjectStore()
-	return u.visibleObjects.GetVisibleObjects()
 }
 
 func (u *Unit) UnsafeRangeVisibleObjects() ([]*visible_objects.VisibleObject, *sync.RWMutex) {

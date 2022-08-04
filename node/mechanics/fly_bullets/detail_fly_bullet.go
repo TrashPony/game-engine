@@ -78,7 +78,7 @@ func DetailFlyBullet(b *bullet.Bullet, realX, realY *float64, toX, toY, radRotat
 			}
 		}
 
-		end = checkEndPath(b, distanceTraveled) || collision || b.ForceExplosion
+		end = checkEndPath(b, distanceTraveled) || collision
 
 		if end && !collision && b.Ammo.AreaCovers > 0 {
 			// обработка урона, пуля взорвалась

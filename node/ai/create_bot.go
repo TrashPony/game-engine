@@ -2,30 +2,19 @@ package ai
 
 import (
 	"github.com/TrashPony/game-engine/router/const/game_types"
+	"github.com/TrashPony/game-engine/router/generate_ids"
 	"github.com/TrashPony/game-engine/router/mechanics/factories/players"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/behavior_rule"
 	_map "github.com/TrashPony/game-engine/router/mechanics/game_objects/map"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/player"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/unit"
 	"math/rand"
-	"sync"
 	"time"
 )
 
-var generateID = -1
-var mx sync.Mutex
-
-func GetBotID() int {
-	mx.Lock()
-	defer mx.Unlock()
-	generateID--
-
-	return generateID
-}
-
 func CreateBot(battleUUID string, teamID int, mp *_map.Map, x, y, rotate int, behavior *behavior_rule.BehaviorRules, addInCommonStore, seed bool, bodyID int) *player.Player {
 
-	generateBotID := GetBotID()
+	generateBotID := generate_ids.GetBotID()
 
 	if seed {
 		time.Sleep(time.Nanosecond)

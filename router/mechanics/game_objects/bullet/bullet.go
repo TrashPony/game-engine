@@ -5,44 +5,36 @@ import (
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/ammo"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/target"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/weapon"
-	"math"
-	"sync"
 )
 
 type Bullet struct {
-	ID                 int            `json:"id"`
-	Weapon             *weapon.Weapon `json:"-"`
-	Ammo               *ammo.Ammo     `json:"ammo"`
-	EquipID            int            `json:"-"`
-	Rotate             float64        `json:"rotate"`
-	X                  int            `json:"x"`
-	Y                  int            `json:"y"`
-	Z                  float64        `json:"z"` // определяет "высоту" пули (сильнее отдалять тени)
-	Speed              int            `json:"speed"`
-	Target             *target.Target `json:"target"`
-	ChaseTarget        *target.Target `json:"-"`
-	DistToTarget       int            `json:"-"`
-	OwnerID            int            `json:"owner_id"`   // какой игрок стрелял
-	OwnerType          string         `json:"owner_type"` // unit, structure
-	OwnerTeamID        int            `json:"-"`
-	IgnoreOwner        bool           `json:"ignore_owner"`
-	MaxRange           int            `json:"max_range"`
-	FirePos            int            `json:"-"`
-	MapID              int            `json:"map_id"`
-	HP                 int            `json:"destroy"`
-	DetonationDistance int            `json:"-"`
-	DetonationTimeOut  int            `json:"detonation_time_out"`
-	StartX             int            `json:"-"`
-	StartY             int            `json:"-"`
-	StartZ             float64        `json:"-"`
-	StartRadian        float64        `json:"start_radian"`
-	Damage             int            `json:"-"`
-	MaxAngle           float64        `json:"-"`
-	MinAngle           float64        `json:"-"`
-	ForceExplosion     bool           `json:"-"`
-	ObjectID           int            `json:"-"` // ид обьекта которые вызывает снаряжения (турель/стена)
+	ID          int            `json:"id"`
+	Weapon      *weapon.Weapon `json:"-"`
+	Ammo        *ammo.Ammo     `json:"ammo"`
+	EquipID     int            `json:"-"`
+	Rotate      float64        `json:"rotate"`
+	X           int            `json:"x"`
+	Y           int            `json:"y"`
+	Z           float64        `json:"z"` // определяет "высоту" пули (сильнее отдалять тени)
+	Speed       int            `json:"speed"`
+	Target      *target.Target `json:"target"`
+	ChaseTarget *target.Target `json:"-"`
+	OwnerID     int            `json:"owner_id"`   // какой игрок стрелял
+	OwnerType   string         `json:"owner_type"` // unit, structure
+	OwnerTeamID int            `json:"-"`
+	IgnoreOwner bool           `json:"ignore_owner"`
+	MaxRange    int            `json:"max_range"`
+	FirePos     int            `json:"-"`
+	MapID       int            `json:"map_id"`
+	HP          int            `json:"destroy"`
+	StartX      int            `json:"-"`
+	StartY      int            `json:"-"`
+	StartZ      float64        `json:"-"`
+	StartRadian float64        `json:"start_radian"`
+	Damage      int            `json:"-"`
+	MaxAngle    float64        `json:"-"`
+	MinAngle    float64        `json:"-"`
 
-	//
 	RealX            float64        `json:"-"`
 	RealY            float64        `json:"-"`
 	DistanceTraveled float64        `json:"-"`
@@ -50,27 +42,16 @@ type Bullet struct {
 	RadRotate        float64        `json:"-"`
 	Attributes       map[string]int `json:"-"`
 
-	AngularVelocity float64 `json:"angular_velocity"`
-	XVelocity       float64 `json:"x_velocity"`
-	YVelocity       float64 `json:"y_velocity"`
+	XVelocity float64 `json:"x_velocity"`
+	YVelocity float64 `json:"y_velocity"`
 
 	CacheJson      []byte `json:"-"`
 	CreateJsonTime int64  `json:"-"`
 	end            bool
-	mx             sync.RWMutex
 }
 
 func (b *Bullet) GetUpdateData(mapTime int64) []byte {
 	return []byte{}
-}
-
-func (b *Bullet) AddVelocity(x float64, y float64) {
-	b.XVelocity += x
-	b.YVelocity += y
-}
-
-func (b *Bullet) GetVelocityRotate() float64 {
-	return math.Atan2(b.YVelocity, b.XVelocity)
 }
 
 func (b *Bullet) GetX() int {
@@ -103,10 +84,6 @@ func (b *Bullet) GetRotate() float64 {
 
 func (b *Bullet) SetRotate(rotate float64) {
 	b.Rotate = rotate
-}
-
-func (b *Bullet) GetID() int {
-	return b.ID
 }
 
 func (b *Bullet) SetID(id int) {

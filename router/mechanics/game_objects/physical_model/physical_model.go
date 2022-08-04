@@ -6,7 +6,7 @@ import (
 	"math"
 )
 
-// структура которая подскадывается в обьекты которые должны двигатся
+// PhysicalModel структура которая встраивается в обьекты которые должны двигатся
 type PhysicalModel struct {
 	RealX           float64                         `json:"real_x"`
 	RealY           float64                         `json:"real_y"`
@@ -42,9 +42,7 @@ type PhysicalModel struct {
 	PosFunc         func()                          `json:"-"` // функция для принятия положения в конце сервертика
 	Type            string                          `json:"type"`
 	ID              int                             `json:"id"`
-	SenderPos       bool                            `json:"-"`
 	Fly             bool                            `json:"-"`
-	Static          bool                            `json:"static"`
 	polygon         *game_math.Polygon
 	newxPoligon     *game_math.Polygon // todo полигон для проверки следующей позиции, что бы не создавать каждый раз заного
 }

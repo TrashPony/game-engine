@@ -80,7 +80,7 @@ func BodyCheckCollisionDynamicObjectsInMove(rect *game_math.Polygon, mp *_map.Ma
 	// проверять колизии по зонам, если происходит колизия доставать обьект по типу и ид, возвращает обьект
 	for _, obstacle := range obstacles {
 
-		if obstacle.GetMove() || obstacle.GetResource() {
+		if obstacle.GetMove() {
 			continue
 		}
 
@@ -98,7 +98,6 @@ func BodyCheckCollisionDynamicObjectsInMove(rect *game_math.Polygon, mp *_map.Ma
 			fakeObj.GetPhysicalModel().SetPos(float64(obstacle.X), float64(obstacle.Y), 0)
 			if obj != nil {
 				fakeObj.Weight = obj.Weight
-				fakeObj.MoveDestroyer = obj.MoveDestroyer
 			}
 
 			return &fakeObj, obj

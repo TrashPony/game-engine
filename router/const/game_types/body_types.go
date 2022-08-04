@@ -2,7 +2,6 @@ package game_types
 
 import (
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/body"
-	"math/rand"
 )
 
 var bodyTypes = map[int]body.Body{
@@ -15,12 +14,9 @@ var bodyTypes = map[int]body.Body{
 		Width:  62,
 		Radius: 88,
 		// -- balance state
-		MaxHP:              600,
-		RangeRadar:         600,
-		RangeView:          260, // 260
-		RecoveryPower:      28,
-		RecoveryPowerCycle: 128,
-		MaxPower:           2500,
+		MaxHP:      600,
+		RangeRadar: 600,
+		RangeView:  260, // 260
 		// -- move balance state
 		Speed:         44,
 		ReverseSpeed:  44,
@@ -39,7 +35,6 @@ var bodyTypes = map[int]body.Body{
 				YAttach: 64,
 			},
 		},
-		PowerPoints: 100,
 	},
 	2: {
 		ID:     2,
@@ -50,12 +45,9 @@ var bodyTypes = map[int]body.Body{
 		Width:  62,
 		Radius: 88,
 		// -- balance state
-		MaxHP:              600,
-		RangeRadar:         600,
-		RangeView:          260, // 260
-		RecoveryPower:      28,
-		RecoveryPowerCycle: 128,
-		MaxPower:           2500,
+		MaxHP:      600,
+		RangeRadar: 600,
+		RangeView:  260, // 260
 		// -- move balance state
 		Speed:         44,
 		ReverseSpeed:  44,
@@ -74,7 +66,6 @@ var bodyTypes = map[int]body.Body{
 				YAttach: 64,
 			},
 		},
-		PowerPoints: 100,
 	},
 }
 
@@ -95,7 +86,6 @@ func GetNewBody(id int) *body.Body {
 	}
 
 	newBody.Texture = newBody.Name
-	newBody.SetWheelsPositions()
 	return &newBody
 }
 
@@ -103,24 +93,8 @@ func GetAllBody() map[int]body.Body {
 	allBodies := make(map[int]body.Body)
 
 	for id, bodyType := range bodyTypes {
-		bodyType.SetWheelsPositions()
 		allBodies[id] = bodyType
 	}
 
 	return allBodies
-}
-
-func GetRandomBody() *body.Body {
-	allBodies := make([]int, 0)
-
-	for _, bodyType := range bodyTypes {
-
-		if bodyType.OnlyConfig {
-			continue
-		}
-
-		allBodies = append(allBodies, bodyType.ID)
-	}
-
-	return GetNewBody(allBodies[rand.Intn(len(allBodies))])
 }

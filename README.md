@@ -296,7 +296,7 @@ Weight        float64             `json:"-"`           // вес (влияет �
 представляет из себя шарик
 радиусом [_const.AmmoRadius](https://github.com/TrashPony/game-engine/blob/master/router/const/const.go#L7), физика пули
 работает на
-формулах ["Полета снаряда"](https://en.wikipedia.org/wiki/) ([реализация](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_math/bullet_ballistic.go))
+формулах ["Полета снаряда"](https://en.wikipedia.org/wiki/Projectile_motion) ([реализация](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_math/bullet_ballistic.go))
 . В зависимости от типа
 снаряда ([пуля](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/fly_bullets/fly_bullet.go)
 , [лазер](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/fly_bullets/fly_laser.go),

@@ -13,6 +13,7 @@ import {UpdateObject} from "../../game/watch/update";
 import {AddObjectMoveBufferData} from "../../game/map/move_object";
 import {RemoveRadarObject} from "../../game/watch/remove";
 import {CreateMark, MoveMark, RemoveMark} from "../../game/watch/marks";
+import {FlyLaser} from "../../game/bullet/laser";
 
 export const SourceItemBin = {
   1: "squadInventory", 2: "Constructor", 3: "empty", 4: "box", 5: "storage",
@@ -220,6 +221,23 @@ function BinaryReader(msgBytes, store) {
       }
 
       ObjectDead(msg)
+    }
+  }
+
+  if (msgBytes[0] === 20) {
+    for (let i = 0; i < msgBytes.length; i += 22) {
+      let event = msgBytes.slice(i, i + 22);
+
+      let msg = {
+        type_id: intFromBytes(event.slice(1, 2)),
+        x: intFromBytes(event.slice(2, 6)),
+        y: intFromBytes(event.slice(6, 10)),
+        to_x: intFromBytes(event.slice(10, 14)),
+        to_y: intFromBytes(event.slice(14, 18)),
+        unit_id: intFromBytes(event.slice(18, 22)),
+      }
+
+      FlyLaser(msg);
     }
   }
 

@@ -5,14 +5,14 @@ import (
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/unit"
 )
 
-func CheckViewCoordinate(watcher Watcher, x, y int, b *battle.Battle, units []*unit.Unit) (bool, bool) {
+func CheckViewCoordinate(watcher Watcher, x, y int, b *battle.Battle, units []*unit.Unit, radius int) (bool, bool) {
 	var view, radarVisible bool
 
 	if b != nil {
 
 		for _, u := range units {
 			if u.TeamID == watcher.GetTeamID() {
-				unitView, unitRadarVisible := u.CheckViewCoordinate(x, y)
+				unitView, unitRadarVisible := u.CheckViewCoordinate(x, y, radius)
 				if unitView {
 					return true, true
 				}
@@ -30,7 +30,7 @@ func CheckViewCoordinate(watcher Watcher, x, y int, b *battle.Battle, units []*u
 				continue
 			}
 
-			objView, objRadarVisible := obj.CheckViewCoordinate(x, y)
+			objView, objRadarVisible := obj.CheckViewCoordinate(x, y, radius)
 			if objView {
 				return true, true
 			}

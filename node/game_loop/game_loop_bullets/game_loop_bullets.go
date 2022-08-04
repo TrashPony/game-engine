@@ -40,8 +40,11 @@ func fly(mp *_map.Map, b *battle2.Battle, flyBullet *bullet.Bullet, wg *sync.Wai
 
 		ms.AddMsg("flyLaserMsgs", "bin", web_socket_response.Response{
 			BinaryMsg: binary_msg.CreateBulletLaserFly(flyLaserMsg.TypeID, flyLaserMsg.X, flyLaserMsg.Y, flyLaserMsg.ToX, flyLaserMsg.ToY, flyBullet.OwnerID),
-			X:         flyLaserMsg.ToX,
-			Y:         flyLaserMsg.ToY,
+			X:         flyLaserMsg.X,
+			Y:         flyLaserMsg.Y,
+			ToX:       flyLaserMsg.ToX,
+			ToY:       flyLaserMsg.ToY,
+			CheckTo:   true,
 		}, nil)
 	}
 

@@ -173,7 +173,7 @@ func createUnit(battle *battle.Battle, p *player.Player, x, y int) {
 	newUnit.Body = game_types.GetNewBody(1)
 
 	wSlot := newUnit.GetWeaponSlot(1)
-	wSlot.Weapon = game_types.GetNewWeapon(2)
+	wSlot.Weapon = game_types.GetRandomWeapon()
 	wSlot.Ammo = game_types.GetNewAmmo(wSlot.Weapon.DefaultAmmoTypeID)
 	wSlot.SetAnchor()
 

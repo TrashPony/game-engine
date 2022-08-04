@@ -29,7 +29,7 @@ type Weapon struct {
 	WeaponTexture      string                   `json:"weapon_texture"`
 	Artillery          bool                     `json:"artillery"`
 	DefaultAmmoTypeID  int                      `json:"default_ammo_type_id"`
-
+	Unit               bool                     `json:"unit"`
 	// оружие накопительного типа (зажатая мышка коит энергию, отпускание выпускает снаряд)
 	AccumulationFirePower   bool    `json:"accumulation_fire_power"`
 	AccumulationFull        float64 `json:"accumulation_full"`

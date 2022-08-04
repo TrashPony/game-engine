@@ -11,10 +11,14 @@ type Response struct {
 	ID          int         `json:"-"`
 	X           int         `json:"-"`
 	Y           int         `json:"-"`
+	ToX         int         `json:"-"`
+	ToY         int         `json:"-"`
 	TeamID      int         `json:"-"`
 	UserID      int         `json:"-"`
 	PlayerID    int         `json:"-"`
 	GameUUID    string      `json:"-"`
 	OnlyData    bool        `json:"-"`
 	BinaryMsg   []byte      `json:"-"`
+	CheckTo     bool        `json:"-"`
+	Radius      int         `json:"-"`
 }

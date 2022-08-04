@@ -35,7 +35,18 @@ func worker(watcher watch.Watcher, mp *_map.Map, units []*unit.Unit, bullets []*
 	}
 
 	for _, b := range bullets {
-		check(watcher, mp, "bullet", "bullet", b.GetX(), b.GetY(), b.ID, 0, nil, b, gameBattle, ms, units)
+
+		if b.Ammo.Type == "laser" {
+			// лазер это событие а не обьект, поэтому мы его не можем видеть через этот модуль
+			continue
+		}
+
+		// на радаре мы видим только ракеты, визуально мы видим и пули и ракеты
+		if b.Ammo.Type == "missile" {
+			check(watcher, mp, "fly", "bullet", b.GetX(), b.GetY(), b.ID, 0, nil, b, gameBattle, ms, units)
+		} else {
+			check(watcher, mp, "bullet", "bullet", b.GetX(), b.GetY(), b.ID, 0, nil, b, gameBattle, ms, units)
+		}
 	}
 
 	viewDynamicObjects(watcher, mp, updateViewObjects, gameBattle, ms, units)
@@ -52,7 +63,7 @@ func check(watcher watch.Watcher, mp *_map.Map, typeMark, typeObj string, x, y, 
 	b *battle.Battle, ms *web_socket.MessagesStore, units []*unit.Unit) {
 
 	oldVisible := watcher.GetVisibleObjectByTypeAndID(typeObj, idObj)
-	view, radarVisible := watch.CheckViewCoordinate(watcher, x, y, b, units)
+	view, radarVisible := watch.CheckViewCoordinate(watcher, x, y, b, units, 0)
 
 	if typeMark == "bullet" {
 		radarVisible = false
@@ -171,7 +182,7 @@ func removeOldDynamicMemoryObject(watcher watch.Watcher, mp *_map.Map, updateVie
 			return
 		}
 
-		view, _ := watch.CheckViewCoordinate(watcher, memoryObj.X, memoryObj.Y, b, units)
+		view, _ := watch.CheckViewCoordinate(watcher, memoryObj.X, memoryObj.Y, b, units, 0)
 		if memoryObj.TeamID == watcher.GetTeamID() || view {
 
 			watcher.RemoveDynamicObject(memoryObj.ID)
@@ -201,7 +212,7 @@ func removeOldDynamicMemoryObject(watcher watch.Watcher, mp *_map.Map, updateVie
 
 func viewDynamicObject(watcher watch.Watcher, obj *dynamic_map_object.Object, b *battle.Battle, units []*unit.Unit) (bool, bool) {
 	if len(obj.GetPhysicalModel().GeoData) == 0 || len(obj.GetPhysicalModel().GeoData) == 1 {
-		return watch.CheckViewCoordinate(watcher, obj.GetX(), obj.GetY(), b, units)
+		return watch.CheckViewCoordinate(watcher, obj.GetX(), obj.GetY(), b, units, 0)
 	} else {
 		return detailCheckObj(watcher, obj, b, units)
 	}
@@ -212,7 +223,7 @@ func detailCheckObj(watcher watch.Watcher, obj *dynamic_map_object.Object, b *ba
 	radarView := false
 	// если игрок видит хотя бы кусок обьекта то игрок видит обьект, а не по центру
 	for _, geoPoint := range obj.GetPhysicalModel().GetGeoData() {
-		view, radarV := watch.CheckViewCoordinate(watcher, geoPoint.GetX(), geoPoint.GetY(), b, units)
+		view, radarV := watch.CheckViewCoordinate(watcher, geoPoint.GetX(), geoPoint.GetY(), b, units, 0)
 		if view {
 			return true, true
 		}

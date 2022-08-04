@@ -92,12 +92,12 @@ func (o *Object) GetUpdateData(mapTime int64) []byte {
 	return command
 }
 
-func (o *Object) CheckViewCoordinate(x int, y int) (bool, bool) {
-	if o.GetRangeView() >= int(game_math.GetBetweenDist(o.GetPhysicalModel().X, o.GetPhysicalModel().Y, x, y)) {
+func (o *Object) CheckViewCoordinate(x, y, radius int) (bool, bool) {
+	if o.GetRangeView()+radius >= int(game_math.GetBetweenDist(o.GetPhysicalModel().X, o.GetPhysicalModel().Y, x, y)) {
 		return true, true
 	}
 
-	if o.GetRadarRange() >= int(game_math.GetBetweenDist(o.GetPhysicalModel().X, o.GetPhysicalModel().Y, x, y)) {
+	if o.GetRadarRange()+radius >= int(game_math.GetBetweenDist(o.GetPhysicalModel().X, o.GetPhysicalModel().Y, x, y)) {
 		return false, true
 	}
 

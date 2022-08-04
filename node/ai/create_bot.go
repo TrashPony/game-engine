@@ -56,7 +56,7 @@ func CreateBot(battleUUID string, teamID int, mp *_map.Map, x, y, rotate int, be
 
 func getWeapon(newUnit *unit.Unit) {
 	wSlot := newUnit.GetWeaponSlot(1)
-	wSlot.Weapon = game_types.GetNewWeapon(2)
+	wSlot.Weapon = game_types.GetRandomWeapon()
 	wSlot.Ammo = game_types.GetNewAmmo(wSlot.Weapon.DefaultAmmoTypeID)
 	wSlot.SetAnchor()
 }

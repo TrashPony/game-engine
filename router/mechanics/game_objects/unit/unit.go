@@ -197,17 +197,17 @@ func (u *Unit) SetWeaponTarget(target *target.Target) {
 	u.weaponTarget = target
 }
 
-func (u *Unit) CheckViewCoordinate(x, y int) (bool, bool) {
+func (u *Unit) CheckViewCoordinate(x, y, radius int) (bool, bool) {
 
 	if u.Body == nil || u.HP <= 0 {
 		return false, false
 	}
 
-	if u.Body.RangeView >= int(game_math.GetBetweenDist(u.GetX(), u.GetY(), x, y)) {
+	if u.GetRangeView()+radius >= int(game_math.GetBetweenDist(u.GetX(), u.GetY(), x, y)) {
 		return true, true
 	}
 
-	if u.Body.RangeRadar >= int(game_math.GetBetweenDist(u.GetX(), u.GetY(), x, y)) {
+	if u.GetRangeRadar()+radius >= int(game_math.GetBetweenDist(u.GetX(), u.GetY(), x, y)) {
 		return false, true
 	}
 

@@ -40,7 +40,7 @@
             }
         },
         {
-            "filename": "piu-piu_2",
+            "filename": "reverses_start_body_skin_1",
             "frame": {
                 "w": 128,
                 "h": 128,
@@ -53,7 +53,7 @@
             }
         },
         {
-            "filename": "replic_weapon_2_skin_1",
+            "filename": "reverses_weapon_1_skin_1",
             "frame": {
                 "w": 128,
                 "h": 128,
@@ -66,7 +66,7 @@
             }
         },
         {
-            "filename": "replic_start_body_skin_1",
+            "filename": "structure",
             "frame": {
                 "w": 128,
                 "h": 128,
@@ -79,7 +79,7 @@
             }
         },
         {
-            "filename": "laser_turret_weapon_replics",
+            "filename": "aim_small_missile_bullet",
             "frame": {
                 "w": 128,
                 "h": 128,
@@ -92,11 +92,37 @@
             }
         },
         {
-            "filename": "laser_turret_weapon_reverses",
+            "filename": "explores_weapon_1_skin_1",
             "frame": {
                 "w": 128,
                 "h": 128,
                 "x": 512,
+                "y": 990
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "fly",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 512,
+                "y": 1118
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "ground",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 640,
                 "y": 990
             },
             "anchor": {
@@ -109,7 +135,7 @@
             "frame": {
                 "w": 128,
                 "h": 128,
-                "x": 512,
+                "x": 640,
                 "y": 1118
             },
             "anchor": {
@@ -122,7 +148,7 @@
             "frame": {
                 "w": 128,
                 "h": 128,
-                "x": 640,
+                "x": 768,
                 "y": 990
             },
             "anchor": {
@@ -131,12 +157,64 @@
             }
         },
         {
-            "filename": "reverses_start_body_skin_1",
+            "filename": "laser_turret_weapon_replics",
             "frame": {
                 "w": 128,
                 "h": 128,
-                "x": 640,
+                "x": 768,
                 "y": 1118
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "laser_turret_weapon_reverses",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 896,
+                "y": 990
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "piu-piu_2",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 896,
+                "y": 1118
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "replic_weapon_2_skin_1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 1024,
+                "y": 930
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "replic_start_body_skin_1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 1024,
+                "y": 1058
             },
             "anchor": {
                 "x": 0.5,

@@ -11,6 +11,7 @@ import {BinaryReader} from "../store/ws/binary_reader";
 import {ObjectTo} from "./map/move_object";
 import {rotatePoint} from "./utils/rotate_sprite";
 import {initMiniMap, setPositionMapRectangle} from "./interface/mini_map";
+import {UpdateFogBack, UpdateObjectFog} from "./interface/fog_of_war";
 
 let connect = null;
 let userUnit = false;
@@ -79,6 +80,7 @@ function update() {
   }
 
   if (!gameStore.gameSettings.follow_camera || !userUnit) Grab_camera(this);
+  UpdateFogBack(this);
   if (!connect || !connect.connect) return;
 
   processUnit(this)
@@ -104,6 +106,10 @@ function processUnit(scene) {
     processUnitWeapon(unit)
     if (gameStore.player.id === unit.owner_id) {
       findUserUnit = unit
+    }
+
+    if (gameStore.player.team_id === unit.team_id) {
+      UpdateObjectFog(scene, unit, unit.sprite, "unit", unit.body.range_view);
     }
 
     UpdatePosBars(unit.sprite, unit.body.max_hp, unit.hp, 10, null, scene, 'unit', unit.id, 'hp', 50);
@@ -143,6 +149,10 @@ function processObjects(scene) {
 
     if (!obj.moveTween || !obj.moveTween.isPlaying() || obj.bufferMoveTick.length > 0) {
       if (obj.updaterPos) ObjectTo(obj)
+    }
+
+    if (obj.work && gameStore.player.team_id === obj.team_id) {
+      UpdateObjectFog(scene, obj, obj.objectSprite, "object", obj.view_range)
     }
 
     if (obj.max_energy > 0) {
@@ -193,10 +203,6 @@ function sendInputsToBack(scene) {
       fire: fire,
     }));
   }
-}
-
-function checkViewMode(objOwnerID) {
-  return !userUnit || (userUnit.view_mode === 0 || userUnit.owner_id === objOwnerID);
 }
 
 export {update, messagesQueue, userUnit}

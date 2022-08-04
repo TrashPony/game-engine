@@ -5,6 +5,7 @@ import {CreateGame} from "../../game/create";
 import {BinaryReader} from "./binary_reader";
 import {messagesQueue} from "../../game/update";
 import {CreateDynamicObjects} from "../../game/watch/create";
+import {RemoveAllMark} from "../../game/watch/marks";
 
 export default function createSocketPlugin(WS) {
   return store => {
@@ -102,6 +103,7 @@ function WSReader(response, store, ws) {
   }
 
   if (response.event === "RefreshDynamicObj") {
+    RemoveAllMark();
     CreateDynamicObjects(response.data);
   }
 

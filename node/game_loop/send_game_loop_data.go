@@ -94,7 +94,7 @@ func filterMoveTo(team *battle.Team, resp *web_socket_response.Response, objType
 		}
 	}()
 
-	view, radarVisible := watch.CheckViewCoordinate(team, resp.X, resp.Y, mpID, b, units)
+	view, radarVisible := watch.CheckViewCoordinate(team, resp.X, resp.Y, b, units)
 	if view {
 		return resp.BinaryMsg, false
 	}
@@ -133,7 +133,7 @@ func ResponseToBin(command []byte, team *battle.Team, p *player.Player, msgs *we
 			continue
 		}
 
-		view, _ := watch.CheckViewCoordinate(team, msgs.Messages[i].X, msgs.Messages[i].Y, mpID, b, units)
+		view, _ := watch.CheckViewCoordinate(team, msgs.Messages[i].X, msgs.Messages[i].Y, b, units)
 		if view {
 			command = append(command, msgs.Messages[i].BinaryMsg...)
 			binMsgLength += len(msgs.Messages[i].BinaryMsg)

@@ -3,6 +3,7 @@ import {deleteBullet} from "../bullet/remove";
 import {removeUnit} from "../unit/remove";
 import {Scene} from "../create";
 import {removeAllObj, removeDynamicObject} from "../watch/remove";
+import {RemoveAllMark} from "../watch/marks";
 
 function RemoveOldMap() {
 
@@ -17,6 +18,8 @@ function RemoveOldMap() {
   for (let i in gameStore.units) {
     removeUnit(gameStore.units[i])
   }
+
+  RemoveAllMark();
 
   if (Scene && Scene.children) {
     for (let obj of Scene.children.systems.displayList.list) {

@@ -36,12 +36,11 @@ function UpdateDynamicObject(id, update) {
 
     obj.height = intFromBytes(update.slice(28, 29));
     obj.team_id = intFromBytes(update.slice(29, 30));
-    obj.view_range = intFromBytes(update.slice(30, 34));
 
-    let lengthGeoData = intFromBytes(update.slice(34, 35));
+    let lengthGeoData = intFromBytes(update.slice(30, 31));
     if (lengthGeoData > 0) {
 
-      let stopByte = 35;
+      let stopByte = 31;
       let geoData = [];
 
       for (; stopByte < update.length;) {
@@ -76,9 +75,6 @@ function UpdateUnit(id, update) {
 
     unit.hp = intFromBytes(update.slice(0, 4));
     let new_team_id = intFromBytes(update.slice(4, 8));
-    unit.body.range_view = intFromBytes(update.slice(8, 12));
-    unit.body.range_radar = intFromBytes(update.slice(12, 16));
-    unit.view_mode = intFromBytes(update.slice(16, 17));
 
     CreateMapBar(unit.sprite, unit.body.max_hp, unit.hp, 10, null, Scene, 'unit', unit.id, 'hp', 50);
   }

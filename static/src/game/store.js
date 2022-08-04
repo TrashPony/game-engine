@@ -35,6 +35,11 @@ const gameStore = {
   map: null, //** тут лежит карта с глобальной коорджинатной позициией 0:0, говорит о том что игрок живет тут **//
   maps: null,
   mapsState: {},
+  radar_marks: {},
+  FogOfWar: {
+    back: null,
+    brush: null,
+  },
 
   // настройки игры
   selectUnits: [],

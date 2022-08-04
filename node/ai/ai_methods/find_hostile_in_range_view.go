@@ -34,7 +34,7 @@ func FindHostileInRangeView(bot *player.Player, aiUnit *unit.Unit, maxDist int, 
 
 			b := quick_battles.Battles.GetBattleByUUID(bot.GameUUID)
 
-			view, radarView := watch.CheckViewCoordinate(team, currentTarget.GetX(), currentTarget.GetY(), b.Map.Id, b, units.Units.GetAllUnitsArray(b.Map.Id, make([]*unit.Unit, 10)))
+			view, radarView := watch.CheckViewCoordinate(team, currentTarget.GetX(), currentTarget.GetY(), b, units.Units.GetAllUnitsArray(b.Map.Id, make([]*unit.Unit, 10)))
 
 			hostile, _, _ := check_target.CheckTarget(team, currentTarget, b.Map, bot.TeamID)
 			if (view || radarView) && hostile {

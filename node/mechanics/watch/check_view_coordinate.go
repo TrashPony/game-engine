@@ -5,7 +5,39 @@ import (
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/unit"
 )
 
-func CheckViewCoordinate(watcher Watcher, x, y, mpID int, b *battle.Battle, units []*unit.Unit) (bool, bool) {
-	// todo тут могла быть ваша формула расчета видимости
-	return true, true
+func CheckViewCoordinate(watcher Watcher, x, y int, b *battle.Battle, units []*unit.Unit) (bool, bool) {
+	var view, radarVisible bool
+
+	if b != nil {
+
+		for _, u := range units {
+			if u.TeamID == watcher.GetTeamID() {
+				unitView, unitRadarVisible := u.CheckViewCoordinate(x, y)
+				if unitView {
+					return true, true
+				}
+
+				radarVisible = radarVisible || unitRadarVisible
+			}
+		}
+
+		objects, objectsMX := b.Map.UnsafeRangeBuildDynamicObjects()
+		defer objectsMX.RUnlock()
+
+		for _, obj := range objects {
+
+			if obj.TeamID != watcher.GetTeamID() {
+				continue
+			}
+
+			objView, objRadarVisible := obj.CheckViewCoordinate(x, y)
+			if objView {
+				return true, true
+			}
+
+			radarVisible = radarVisible || objRadarVisible
+		}
+	}
+
+	return view, radarVisible
 }

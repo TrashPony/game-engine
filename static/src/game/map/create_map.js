@@ -5,6 +5,7 @@ import {initGunDesignator} from "../interface/server_gun_designator";
 import {base64ToArrayBuffer, intFromBytes, mobileAndTabletCheck} from "../../utils";
 import {updateMiniMap} from "../interface/mini_map";
 import {createDynamicObject} from "../watch/create";
+import {initFog, updateFogSize} from "../interface/fog_of_war";
 
 let MapSize = 4096;
 
@@ -20,6 +21,11 @@ function CreateAllMaps(scene) {
   scene.cameras.main.setBounds(-600, -600, (MapSize * 3) + 1200, (MapSize * 3) + 1200);
   initGunDesignator(scene);
   updateMiniMap();
+
+  if (!gameStore.FogOfWar.back) {
+    gameStore.FogOfWar = initFog(scene);
+  }
+  updateFogSize();
 
   if (mobileAndTabletCheck()) {
     scene.cameras.main.setZoom(0.75);

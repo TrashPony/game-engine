@@ -12,6 +12,7 @@ import {CreateRadarObject} from "../../game/watch/create";
 import {UpdateObject} from "../../game/watch/update";
 import {AddObjectMoveBufferData} from "../../game/map/move_object";
 import {RemoveRadarObject} from "../../game/watch/remove";
+import {CreateMark, MoveMark, RemoveMark} from "../../game/watch/marks";
 
 export const SourceItemBin = {
   1: "squadInventory", 2: "Constructor", 3: "empty", 4: "box", 5: "storage",
@@ -87,6 +88,21 @@ function BinaryReader(msgBytes, store) {
       }
 
       AddObjectMoveBufferData(msg)
+    }
+  }
+
+  if (msgBytes[0] === 5) {
+    // [1[eventID] 4[ID], 4[x], 4[y], 4[ms]]
+    for (let i = 0; i < msgBytes.length; i += 14) {
+      let event = msgBytes.slice(i, i + 14);
+      let msg = {
+        mu: intFromBytes(event.slice(1, 5)),
+        x: intFromBytes(event.slice(5, 9)),
+        y: intFromBytes(event.slice(9, 13)),
+        ms: intFromBytes(event.slice(13, 14)),
+      }
+
+      MoveMark(msg)
     }
   }
 
@@ -204,6 +220,27 @@ function BinaryReader(msgBytes, store) {
       }
 
       ObjectDead(msg)
+    }
+  }
+
+  if (msgBytes[0] === 39) {
+    for (let i = 0; i < msgBytes.length; i += 14) {
+      let event = msgBytes.slice(i, i + 14);
+      let msg = {
+        id: intFromBytes(event.slice(1, 5)),
+        x: intFromBytes(event.slice(5, 9)),
+        y: intFromBytes(event.slice(9, 13)),
+        t: MarksTypes[intFromBytes(event.slice(13, 14))],
+      }
+
+      CreateMark(msg.id, msg.t, msg.x, msg.y)
+    }
+  }
+
+  if (msgBytes[0] === 40) {
+    for (let i = 0; i < msgBytes.length; i += 5) {
+      let event = msgBytes.slice(i, i + 5);
+      RemoveMark(intFromBytes(event.slice(1, 5)))
     }
   }
 

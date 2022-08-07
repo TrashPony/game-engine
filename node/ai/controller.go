@@ -71,7 +71,7 @@ func findPathChecker(b *battle.Battle, u *unit.Unit) {
 
 	if needCalc {
 		// PATH FINDER
-		path, err := find_path.LeftHandAlgorithm(u,
+		path, err := find_path.FindPath(u,
 			float64(u.GetPhysicalModel().GetX()), float64(u.GetPhysicalModel().GetY()),
 			float64(followTarget.GetX()), float64(followTarget.GetY()),
 			nil, true, b.Map)

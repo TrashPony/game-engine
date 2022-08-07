@@ -147,7 +147,7 @@ func MoveUnit(ph *physical_model.PhysicalModel, unitID int, startX, startY, ToX,
 	start := &coordinate.Coordinate{X: int(startX), Y: int(startY)}
 	end := &coordinate.Coordinate{X: int(ToX), Y: int(ToY)}
 
-	err, path = FindPath(mp, start, end, ph, unitID, units, revisionEnd)
+	err, path = findPath(mp, start, end, ph, unitID, units, revisionEnd)
 
 	return path, err
 }
@@ -173,7 +173,7 @@ func PrepareInData(mp *_map.Map, start, end *coordinate.Coordinate) (*Point, *Po
 	return startPoint, endPoint, xSize, ySize, nil
 }
 
-func FindPath(gameMap *_map.Map, start, end *coordinate.Coordinate, ph *physical_model.PhysicalModel, unitID int, units []*unit.Unit, revisionEnd bool) (error, []*coordinate.Coordinate) {
+func findPath(gameMap *_map.Map, start, end *coordinate.Coordinate, ph *physical_model.PhysicalModel, unitID int, units []*unit.Unit, revisionEnd bool) (error, []*coordinate.Coordinate) {
 
 	startPoint, endPoint, xSize, ySize, err := PrepareInData(gameMap, start, end)
 	if err != nil {
@@ -215,7 +215,7 @@ func FindPath(gameMap *_map.Map, start, end *coordinate.Coordinate, ph *physical
 	for {
 		if openPoints.count == 0 {
 			if revisionEnd {
-				// найти самую близжайшую точку к результату, назначить ее концом и найти путь заного
+				// найти самую близжайшую точку к той куда ищем путь, назначить ее концом и найти путь заного
 				point := closePoints.GetMinH()
 				if point == nil {
 					return errors.New("no path"), nil
@@ -281,16 +281,15 @@ func parseNeighbours(curr *Point, open, close *Points, gameMap *_map.Map, end *P
 	for _, c := range nCoordinate {
 
 		if c == nil {
-			continue // если ячейка является блокированой или находиться в масиве посещенных то пропускаем ее
+			continue
 		}
 
-		// считаем для поинта значения пути
 		c.g = curr.GetG(c) // стоимость клетки
 		c.h = GetH(c, end) // приближение от точки до конечной цели.
 		c.GetF()           // длина пути до цели
 		c.parent = curr
 
-		open.addPoint(c, true) // добавляем точку в масив не посещеных
+		open.addPoint(c, true)
 	}
 }
 

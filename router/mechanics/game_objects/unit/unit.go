@@ -6,7 +6,6 @@ import (
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/behavior_rule"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/body"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/burst_of_shots"
-	"github.com/TrashPony/game-engine/router/mechanics/game_objects/coordinate"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/gunner"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/physical_model"
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/target"
@@ -94,13 +93,6 @@ func (u *Unit) GetX() int {
 
 func (u *Unit) GetY() int {
 	return u.GetPhysicalModel().GetY()
-}
-
-type MovePath struct {
-	path         *[]*coordinate.Coordinate
-	followTarget *target.Target
-	currentPoint int
-	needFindPath bool
 }
 
 func (u *Unit) GetID() int {

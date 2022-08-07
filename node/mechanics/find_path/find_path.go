@@ -10,12 +10,12 @@ import (
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/unit"
 )
 
-func LeftHandAlgorithm(moveUnit *unit.Unit, startX, startY, ToX, ToY float64, units []*unit.Unit, revisionEnd bool, mp *_map.Map) ([]*coordinate.Coordinate, error) {
+func FindPath(moveUnit *unit.Unit, startX, startY, ToX, ToY float64, units []*unit.Unit, revisionEnd bool, mp *_map.Map) ([]*coordinate.Coordinate, error) {
 	// создаем фейковую тушку для расчета ее на разных позициях
 	physicalModel := moveUnit.GetCopyPhysicalModel()
 	physicalModel.SetPolygon(nil)
 
-	// 0 пытаемя проложить путь от начала пути до конечной точки по прямой
+	// пытаемя проложить путь от начала пути до конечной точки по прямой, если колизий нет то и искать не надо
 	collision := collisions.SearchCollisionInLine(startX, startY, ToX, ToY, mp, physicalModel, moveUnit.GetID(), 5, false, units)
 	if !collision {
 		return []*coordinate.Coordinate{{X: int(ToX), Y: int(ToY)}}, nil
@@ -25,7 +25,7 @@ func LeftHandAlgorithm(moveUnit *unit.Unit, startX, startY, ToX, ToY float64, un
 }
 
 func startFind(ph *physical_model.PhysicalModel, unitID int, x, y, ToX, ToY float64, mp *_map.Map, units []*unit.Unit, revisionEnd bool) ([]*coordinate.Coordinate, error) {
-
+	// если честно то я уже сам не помню что тут происходит, но это важно
 	path := make([]*coordinate.Coordinate, 0)
 	last := false
 
@@ -49,7 +49,7 @@ func startFind(ph *physical_model.PhysicalModel, unitID int, x, y, ToX, ToY floa
 				return nil, errors.New("a start no find path")
 			}
 
-			// находим максимальную отдаленную точку куда может попать юнит
+			// находим максимальную отдаленную точку куда может попасть юнит
 			x, y, last = SearchPoint(&points, x, y, mp, ph, unitID, units)
 			if x == 0 && y == 0 {
 

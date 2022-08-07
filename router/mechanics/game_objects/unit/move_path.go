@@ -5,6 +5,13 @@ import (
 	"github.com/TrashPony/game-engine/router/mechanics/game_objects/target"
 )
 
+type MovePath struct {
+	path         *[]*coordinate.Coordinate
+	followTarget *target.Target
+	currentPoint int
+	needFindPath bool
+}
+
 func (u *Unit) GetMovePathState() (*target.Target, *[]*coordinate.Coordinate, int, bool) {
 	u.moveMx.Lock()
 	defer u.moveMx.Unlock()

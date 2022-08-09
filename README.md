@@ -15,7 +15,8 @@
 - [Поиск пути, управление движением ИИ](#ai-support)
 
 Движок не решает вопросы графики и звука, это лежит на плечах клиента. В данном случае реализован клиент на игровом
-движке [Phaser3](https://phaser.io/phaser3), в роли клиента может выступать все что умеет в веб сокеты. (или вообще любые
+движке [Phaser3](https://phaser.io/phaser3), в роли клиента может выступать все что умеет в веб сокеты. (или вообще
+любые
 сокеты с небольшой переделкой api). Например, хорошим клиентом может стать [Ebitengine](https://ebiten.org/).
 
 #### Игра ["Veliri"](https://yandex.ru/games/app/184316?lang=ru) (Session/MMO/Action) разработана с помощью этого движка:
@@ -330,19 +331,34 @@ AddMsg(typeMsg, typeCheck string, msg web_socket_response.Response, attributes m
 - `attributes` - какие-то доп атрибуты, которые не уместились в других объектах.
 
 В `GameLoop` большинство сообщений являются бинарными и добавляются примерно одинаково:
+
 ```go
 MessagesStore.AddMsg("fireMsgs", "bin", web_socket_response.Response{
-    BinaryMsg: binary_msg.CreateFireGunBinaryMsg(m.TypeID, m.X, m.Y, m.Z, m.Rotate, m.AccumulationPercent),
-    X:         m.X,
-    Y:         m.Y,
+BinaryMsg: binary_msg.CreateFireGunBinaryMsg(m.TypeID, m.X, m.Y, m.Z, m.Rotate, m.AccumulationPercent),
+X:         m.X,
+Y:         m.Y,
 }, nil)
 ```
 
-### // TODO
+Бинарное сообщение выглядит как набор байт, где 1 байт определяет команду. Остальные байты это информация самого
+сообщения. Порядок и значений байт строго определены в сообщение. Все сообщения собираются
+вот [тут](https://github.com/TrashPony/game-engine/blob/master/node/binary_msg/binary_msg.go).
+
+Структура сообщения выглядит примерно так: <br>
+`[1[eventID], 4[unitID], 4[speed], 4[x], 4[y], 4[z]` - логическое представление <br>
+`[0||0,0,0,0||0,0,0,0||0,0,0,0||0,0,0,0||0,0,0,0]`   - массив (это 1 массив) байт который видит машина <br>
+
+- 1[eventID] - 1 байт, eventID - ид команды.
+- 4[unitID] - 4 байта, unitID - ид юнита.
+- и тд.
 
 #### Обработка сообщений ноды
 
+// TODO
+
 #### Формат выходных данных
+
+// TODO
 
 <h3 id="input">
 Ввод пользователя

@@ -455,10 +455,10 @@ function parseMegaPackData(data, store) {
 
 Например:
 
-- `CountFireBullet = 8, DelayFollowingFire = 0`, вылетает 8 пуль без задержки, это дробовик.
+- `CountFireBullet = 8, DelayFollowingFire = 0`, вылетает 8 пуль без задержки, это дробовик.<br>
   ![This is an image](./readme_assets/img_12.gif)<br>
 - `CountFireBullet = 2, DelayFollowingFire = 32`, вылетают 2 пули с задержкой в 32 мс, это ракетница с очередью 2
-  выстрела.
+  выстрела.<br>
   ![This is an image](./readme_assets/img_13.gif)<br>
 
 Пули попадают в мир через

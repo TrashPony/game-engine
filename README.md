@@ -404,7 +404,31 @@ function parseMegaPackData(data, store) {
 Ввод пользователя
 </h3>
 
-### // TODO
+Ввод пользователя в основном ложится на плечи клиента. Клиент этот ввод должен продюсировать по веб сокетам.
+Например, [так](https://github.com/TrashPony/game-engine/blob/master/static/src/game/update.js#L165):
+
+```js
+    ws.send(JSON.stringify({
+    event: "i",
+    service: "battle",
+    select_units: gameStore.selectUnits,
+    w: scene.wasd.up.isDown,
+    a: scene.wasd.left.isDown,
+    s: scene.wasd.down.isDown,
+    d: scene.wasd.right.isDown,
+    x: x,       // mouse x
+    y: y,       // mouse y
+    fire: fire, // press left mouse
+}));
+```
+
+Сервер принимает это [сообщение](https://github.com/TrashPony/game-engine/blob/master/router/web_socket/battle.go#L44) и
+проксирует его на [ноду](https://github.com/TrashPony/game-engine/blob/master/node/rpc/requests.go#L50), которая кладет
+все параметры в
+объект [WASD](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/physical_model/wasd.go)
+.
+
+Дальше в `GameLoop` по этому объекту проверяется какие действия выполнять.
 
 <h3 id="weapon">
 Баллистика, стрельба, слоты для оружия

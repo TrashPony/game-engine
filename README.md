@@ -352,13 +352,53 @@ Y:         m.Y,
 - 4[unitID] - 4 байта, unitID - ид юнита.
 - и тд.
 
-#### Обработка сообщений ноды
+#### Обработка сообщений в `GameLoop`
 
-// TODO
+Когда все сообщения
+собранны, `GameLoop` [формирует пачки сообщений для каждого игрока](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/send_game_loop_data.go#L16)
+. Это нужно для того что бы убирать сообщения,
+которые [не видит](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/send_game_loop_data.go#L114)
+игрок из-за тумана войны или другой причине.
 
-#### Формат выходных данных
+Когда для игрока формируется пачка сообщений они объединяются
+в [одно сообщение](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/send_game_loop_data.go#L52).
+Важно что сообщения одного типа идут друг за другом, а не в разнобой, это позволяет указать длину сообщения одного типа,
+и размазать его на клиента на много мелких сообщений.
 
-// TODO
+Результатом формирования будет 1 большой сообщение со всеми изменениями мира для 1‑го игрока.
+Примерно такого вида:<br>
+
+```
+  // [1[eventID],
+  //      4[data_size], data[data],
+  //      ...
+  //      4[data_size], data[data],
+```
+
+- 1[eventID] - 1 байт, в данном случае это 100, говорит что это большой пакет данных который надо разобрать.
+- 4[data_size] - размер всех сообщений 1‑го типа, то есть это например 100 сообщений типа `fireMsg`, которе в свою
+  очередь тоже будится биться на мелки и уже дальше обрабатываться
+- ... - и так для каждого типа сообщений.
+
+На клиенте эти сообщений можно
+обрабатывать [так](https://github.com/TrashPony/game-engine/blob/master/static/src/store/ws/binary_reader.js#L26):
+
+```js
+function parseMegaPackData(data, store) {
+
+
+    let unitMoveSize = intFromBytes(data.slice(1, 5))
+    let stopByte = 5 + unitMoveSize;
+    BinaryReader(data.subarray(5, 5 + unitMoveSize), store)
+
+    for (; stopByte < data.length;) {
+        let subData = intFromBytes(data.slice(stopByte, stopByte + 4))
+        stopByte = 4 + stopByte;
+        BinaryReader(data.subarray(stopByte, stopByte + subData), store)
+        stopByte = subData + stopByte;
+    }
+}
+```
 
 <h3 id="input">
 Ввод пользователя

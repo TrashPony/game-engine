@@ -430,7 +430,7 @@ function parseMegaPackData(data, store) {
 
 #### Стрельба
 
-Движение и стрельбы обрабатывается в `GameLoop`
+Движение и стрельба обрабатывается в `GameLoop`
 вот [тут](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/game_loop_gun/unit.go).
 
 - Метод [`RotateGun`](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/attack/rotate_gun.go#L19)
@@ -480,7 +480,7 @@ function parseMegaPackData(data, store) {
 
 В игре реализована баллистика в 3д пространстве, формулы используемые в расчетах
 [полета снаряда](https://en.wikipedia.org/wiki/Projectile_motion) ([реализация](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_math/bullet_ballistic.go))
-. Карте в игре тоже является не плоской, а с высотами (`Map.LevelMap`). У физички модели объектов/юнитов высоту
+. Карта в игре тоже является не плоской, а с высотами (`Map.LevelMap`). У физической модели объектов/юнитов высоту
 определяет параметр `PhysicalModel.Height`.
 
 ![This is an image](./readme_assets/img_9.gif)<br>

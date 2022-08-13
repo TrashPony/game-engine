@@ -555,10 +555,55 @@ function parseMegaPackData(data, store) {
 Реализация "Обзора" игроков (создание/обновление игровых объектов на стороне клиента)
 </h3>
 
-### // TODO
+Обзор поделен на 4 уровня.
+
+- объекты в "прямой видимости".
+- объекты на радаре: радар показывает метки в тумане войны, но не сами объекты.
+- объекты в памяти: объекты которые игрок видел в прямой видимости, но сейчас они в тумане войны (возможно уже
+  уничтожены, игрок этого не знает).
+- статичные объекты: (земля, горы, дороги и т.д.) игроки их видят всегда.<br>
+  ![This is an image](./readme_assets/img_14.png)<br>
+
+Обзор насчитывается в `GameLoop`
+методом [View](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/game_loop_view/game_loop_view.go),
+проверка обзора является самой дорогостоящей операцией в движке т.к. приходится проверять каждый объект с обзоров с
+каждым объектом который может скрываться за туманом войны.
+
+В текущей реализации объектом который "видит"
+является [команда](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/battle/team.go),
+которая [встраивает](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_objects/unit/unit.go#L245)
+объекты которые, видит в другие объекты (юниты, турели). Но если игра предполагает индивидуальное зрение или какие-то
+эффекты например "слепота" то надо будет расширить методы обзора на юниты и обрабатывать каждый отдельно (или делать
+гибридную модель), что скажется на производительности (еще можно оптимизировать, но этот путь не для слабых духом).
+
+#### Как происходит расчет обзора
+
+Базовый алгоритм примерно такой:
+
+- проверяем объект на "видимость"
+  методом [`CheckViewCoordinate`](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/watch/check_view_coordinate.go)
+  .
+- [проверяем](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/watch/check_objects.go#L27) результат
+  с тем что смотрящий видел до этого (видел, видел, но объект изменился, не видел, видел только на радаре и тд).
+- если произошло изменение состояния, то фиксируем его и отправляем изменение на
+  клиент. [Всего есть 5 событий](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/game_loop_view/game_loop_view.go#L237):
+    - Создание метки радара
+    - Удаление метки радара
+    - Создание объекта
+    - Обновление объекта
+    - Удаление объекта
+- [дополнительно удаляем](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/game_loop_view/game_loop_view.go#L78)
+  все объекты которые видит игрок, но они не попали в цикл обновления (например объект умер).
+
+Алгоритм
+для "[памяти](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/game_loop_view/game_loop_view.go#L102)"
+отличается тем что удаление объекта происходит только в том случае если его убили в зоне "прямой
+видимости". Или
+при [отрытии зоны](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/game_loop_view/game_loop_view.go#L164)
+места, где стоял объект.
 
 <h3 id="ai">
-ИИ
+ ИИ
 </h3>
 
 ИИ - основан на "дереве поведения", представлен как бинарный граф.

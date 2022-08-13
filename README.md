@@ -523,10 +523,36 @@ function parseMegaPackData(data, store) {
 Обнаружение коллизий, реакция на коллизию
 </h3>
 
-### // TODO
+За обнаружение коллизий отвечает
+пакет [collisions](https://github.com/TrashPony/game-engine/tree/master/node/mechanics/collisions).
+
+Обнаружение коллизий нужно в основном для:
+
+1) обнаружение столкновений при движении
+2) [поиск пути](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/find_path/check_valid_coordinate.go)
+3) [обнаружение попадания пуль](https://github.com/TrashPony/game-engine/blob/master/node/mechanics/fly_bullets/detail_fly_bullet.go#L70)
+
+#### Обнаружение столкновений при движении и реакции на него.
+
+Обнаружение коллизии при движении происходит в
+методе [checkMoveCollision](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/game_loop_move/check_move_collision.go)
+, проверка происходит для <b>будущей</b> полизиции которую стремится принять объект. Т.к. в игре есть разные модели то
+можно выделить несколько типов проверки на коллизию <sub>(это проблема, но таков путь)</sub>.
+
+- `Юнит - Юнит` - (полигон - полигон);
+- `Юнит - Объект` - (полигон - окружность);
+- `Объект - Объект` - (окружность - окружность);
+- `Юнит` - Граница карты, хард-код по позиции юнита;
+- `Объект` - Граница карты, хард-код по позиции юнита;
+
+Во время столкновения происходит:
+
+- [изменение вектора движения](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_math/collision_reaction.go#L27)
+- [поворот объекта](https://github.com/TrashPony/game-engine/blob/master/router/mechanics/game_math/collision_reaction.go#L99)
+- [повторный запрос на поиск пути если это юнит](https://github.com/TrashPony/game-engine/blob/master/node/game_loop/game_loop_move/check_move_collision.go#L167)
 
 <h3 id="watch">
-Реализация "Обзора" игроков (создание/обновление игровых обьектов на стороне клиента)
+Реализация "Обзора" игроков (создание/обновление игровых объектов на стороне клиента)
 </h3>
 
 ### // TODO

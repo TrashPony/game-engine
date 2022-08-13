@@ -7,12 +7,12 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-
 	"path"
 	"strings"
 )
 
 func main() {
+
 	router := mux.NewRouter()
 	router.HandleFunc("/socket", web_socket.HandleConnections)
 

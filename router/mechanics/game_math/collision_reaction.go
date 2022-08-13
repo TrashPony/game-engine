@@ -8,7 +8,6 @@ type collider interface {
 	GetX() int
 	GetY() int
 	GetVelocity() (float64, float64)
-	GetVelocityRotate() float64
 	GetCurrentSpeed() float64
 	GetDirection() bool
 	SetPowerMove(float64)

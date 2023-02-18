@@ -3,63 +3,39 @@ package find_path
 import "sync"
 
 type pointsHeapType struct {
-	points []*Point
-	mx     sync.Mutex
+	points sync.Pool
 }
 
-var pointHead = pointsHeapType{}
+var pointHead = pointsHeapType{
+	points: sync.Pool{
+		New: func() interface{} { return &Point{} },
+	},
+}
 
 func (h *pointsHeapType) Push(x *Point) {
-	h.mx.Lock()
-	defer h.mx.Unlock()
 	x.parent = nil
-	h.points = append(h.points, x)
+	h.points.Put(x)
 }
 
 func (h *pointsHeapType) Pop() *Point {
-	h.mx.Lock()
-	defer h.mx.Unlock()
-
-	old := h.points
-
-	if len(old) == 0 {
-		return &Point{}
-	}
-
-	n := len(old)
-	x := old[n-1]
-	h.points = old[0 : n-1]
-	return x
+	return h.points.Get().(*Point)
 }
 
 type minFArrayHeapType struct {
-	points [][]*Point
-	mx     sync.Mutex
+	points sync.Pool
 }
 
-var minFArrayHeap = minFArrayHeapType{}
+var minFArrayHeap = minFArrayHeapType{
+	points: sync.Pool{
+		New: func() interface{} { return []*Point{} },
+	},
+}
 
 func (h *minFArrayHeapType) Push(x []*Point) {
-	h.mx.Lock()
-	defer h.mx.Unlock()
-
 	x = x[:0]
-	h.points = append(h.points, x)
+	h.points.Put(x)
 }
 
 func (h *minFArrayHeapType) Pop() []*Point {
-	h.mx.Lock()
-	defer h.mx.Unlock()
-
-	old := h.points
-
-	if len(old) == 0 {
-		return make([]*Point, 0, 128)
-	}
-
-	n := len(old)
-	x := old[n-1]
-	h.points = old[0 : n-1]
-
-	return x
+	return h.points.Get().([]*Point)
 }

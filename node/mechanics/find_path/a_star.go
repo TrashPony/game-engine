@@ -17,8 +17,12 @@ type Points struct {
 	count  int
 	// небольшая оптимизация поиска минF
 	minFIndex  int
-	minFArrays []int
-	minFKeys   map[int][]*Point
+	minFArrays []*minFStore
+}
+
+type minFStore struct {
+	minF   int
+	points []*Point
 }
 
 func (p *Points) checkCoordinate(x, y, xSize, ySize int) bool {
@@ -38,11 +42,19 @@ func (p *Points) checkCoordinate(x, y, xSize, ySize int) bool {
 func (p *Points) addPoint(c *Point, minFCalc bool) {
 
 	if minFCalc {
-		if p.minFKeys[c.f] == nil {
-			p.minFKeys[c.f] = minFArrayHeap.Pop()
+		index := binarySearch(p.minFArrays, c.f)
+
+		var ps []*Point
+		if index == -1 {
+			ps = minFArrayHeap.Pop()
 			p.addNumberInSortArray(c.f) // вставка в отсортированый масив, нет необходимости его каждый раз сортировать
+			index = binarySearch(p.minFArrays, c.f)
+		} else {
+			ps = p.minFArrays[index].points
 		}
-		p.minFKeys[c.f] = append(p.minFKeys[c.f], c)
+
+		ps = append(ps, c)
+		p.minFArrays[index].points = ps
 	}
 
 	p.points[c.x][c.y] = c // добавляем точку в масив не посещеных
@@ -51,30 +63,32 @@ func (p *Points) addPoint(c *Point, minFCalc bool) {
 
 func (p *Points) addNumberInSortArray(number int) {
 	// ищем индекс куда вставить элемент c помощью бинарного поиска
-	index := binarySearch(p.minFArrays, number)
+	index := binarySearchInsert(p.minFArrays, number)
 	if index == -1 || len(p.minFArrays) <= index+1 {
 
-		p.minFArrays = append(p.minFArrays, number)
+		p.minFArrays = append(p.minFArrays, &minFStore{minF: number})
 
 		if index == -1 {
-			sort.Ints(p.minFArrays)
+			sort.SliceStable(p.minFArrays, func(i, j int) bool {
+				return p.minFArrays[i].minF < p.minFArrays[j].minF
+			})
 		}
 	} else {
 		index++
 		p.minFArrays = append(p.minFArrays[:index+1], p.minFArrays[index:]...)
-		p.minFArrays[index] = number
+		p.minFArrays[index] = &minFStore{minF: number}
 	}
 }
 
-func binarySearch(a []int, search int) (result int) {
+func binarySearchInsert(a []*minFStore, search int) (result int) {
 	mid := len(a) / 2
 	switch {
 	case len(a) == 0:
 		result = -1 // not found
-	case a[mid] > search:
-		result = binarySearch(a[:mid], search)
-	case a[mid] < search:
-		result = binarySearch(a[mid+1:], search)
+	case a[mid].minF > search:
+		result = binarySearchInsert(a[:mid], search)
+	case a[mid].minF < search:
+		result = binarySearchInsert(a[mid+1:], search)
 		result += mid + 1
 	default: // a[mid] == search
 		result = mid // found
@@ -83,10 +97,33 @@ func binarySearch(a []int, search int) (result int) {
 	return
 }
 
+func binarySearch(a []*minFStore, search int) int {
+	first := 0
+	last := len(a) - 1
+
+	for first <= last {
+		mid := (first + last) / 2
+		switch {
+		case a[mid].minF == search:
+			return mid
+		case a[mid].minF < search:
+			first = mid + 1
+		case a[mid].minF > search:
+			last = mid - 1
+		}
+	}
+
+	return -1
+}
+
 func (p *Points) removePoint(c *Point) {
 
 	index := -1
-	for i, rC := range p.minFKeys[c.f] {
+
+	pointsIndex := binarySearch(p.minFArrays, c.f)
+	ps := p.minFArrays[pointsIndex].points
+
+	for i, rC := range ps {
 		if rC.x == c.x && rC.y == c.y {
 			index = i
 			break
@@ -94,8 +131,8 @@ func (p *Points) removePoint(c *Point) {
 	}
 
 	if index >= 0 {
-		p.minFKeys[c.f][index] = p.minFKeys[c.f][len(p.minFKeys[c.f])-1]
-		p.minFKeys[c.f] = p.minFKeys[c.f][:len(p.minFKeys[c.f])-1]
+		ps[index] = ps[len(ps)-1]
+		p.minFArrays[pointsIndex].points = ps[:len(ps)-1]
 	}
 
 	p.points[c.x][c.y] = nil
@@ -104,14 +141,22 @@ func (p *Points) removePoint(c *Point) {
 
 func (p *Points) GetMinF() *Point {
 
-	if len(p.minFArrays) > p.minFIndex && p.minFKeys[p.minFArrays[p.minFIndex]] != nil {
-
-		if len(p.minFKeys[p.minFArrays[p.minFIndex]]) == 0 {
-			p.minFIndex++
-		}
-
-		if len(p.minFArrays) > p.minFIndex && len(p.minFKeys[p.minFArrays[p.minFIndex]]) > 0 {
-			return p.minFKeys[p.minFArrays[p.minFIndex]][0]
+	if len(p.minFArrays) > p.minFIndex {
+		ps := p.minFArrays[p.minFIndex].points
+		if ps != nil {
+			if len(ps) == 0 {
+				p.minFIndex++
+				if len(p.minFArrays) > p.minFIndex {
+					ps = p.minFArrays[p.minFIndex].points
+					if len(ps) > 0 {
+						return ps[0]
+					}
+				}
+			} else {
+				if len(p.minFArrays) > p.minFIndex && len(ps) > 0 {
+					return ps[0]
+				}
+			}
 		}
 	}
 
@@ -126,7 +171,6 @@ func (p *Points) GetMinF() *Point {
 
 	return min
 }
-
 func (p *Points) GetMinH() *Point {
 
 	var min *Point
@@ -203,8 +247,8 @@ func findPath(gameMap *_map.Map, start, end *coordinate.Coordinate, ph *physical
 			}
 		}
 
-		for _, x := range openPoints.minFKeys {
-			minFArrayHeap.Push(x)
+		for _, x := range openPoints.minFArrays {
+			minFArrayHeap.Push(x.points)
 		}
 	}()
 
@@ -296,13 +340,11 @@ func parseNeighbours(curr *Point, open, close *Points, gameMap *_map.Map, end *P
 func initPoints(xSize, ySize int) (*Points, *Points) {
 	openPoints, closePoints := &Points{
 		points:     make([][]*Point, xSize),
-		minFKeys:   make(map[int][]*Point),
-		minFArrays: make([]int, 0),
+		minFArrays: make([]*minFStore, 0),
 		open:       true,
 	}, &Points{
 		points:     make([][]*Point, xSize),
-		minFKeys:   make(map[int][]*Point),
-		minFArrays: make([]int, 0),
+		minFArrays: make([]*minFStore, 0),
 	}
 
 	for i := 0; i < len(openPoints.points); i++ {

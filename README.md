@@ -24,6 +24,10 @@
 ([ссылка на видео](https://www.youtube.com/watch?v=7D_ILFRQG2MQ))
 [![Watch the video](/readme_assets/img_1.png)](https://www.youtube.com/watch?v=7D_ILFRQG2MQ)
 
+#### Игра ["Veliri: Planet of Machines"](https://store.steampowered.com/app/2828170/Veliri_Planet_of_Machines/) (MMORPG/SANDBOX) разработана с помощью этого движка:
+
+([ссылка на видео](https://www.youtube.com/watch?v=Fd-_8Sf_n3g))
+
 ### Как работать с движком:
 
 1) форкаете
